@@ -1,0 +1,10 @@
+version: '3'
+services:
+  student-success-center:
+    build: .
+    ports:
+      - "5000:5000"  # Map your host port to the container port
+    volumes:
+      - .:/app       # Mounts the current directory to the container, enabling live reloading
+    stdin_open: true
+    tty: true
