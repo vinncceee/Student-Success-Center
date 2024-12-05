@@ -28,8 +28,11 @@ mongoose
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   gradeLevel: { type: String, required: true },
-  role: { type: String, required: true, enum: ["Student", "Tutor"] },
+  role: { type: String, required: true, enum: ['Student', 'Tutor'] },
+  email: { type: String, default: null }, // Optional, with no uniqueness constraint
 });
+
+
 
 const User = mongoose.model("User", userSchema);
 
