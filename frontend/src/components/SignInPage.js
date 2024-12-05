@@ -1,25 +1,34 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 function SignInPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // React Router hook for navigation
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/login', { email, password });
-      setMessage(response.data.message);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      setMessage("Sign-in successful! Redirecting...");
+      // Redirect to the landing page after successful sign-in
+      setTimeout(() => navigate("/landing"), 2000);
     } catch (error) {
-      setMessage(error.response?.data?.message || 'An error occurred.');
+      setMessage("Error: " + error.message);
     }
   };
 
+  const handleSignUpRedirect = () => {
+    navigate("/signup"); // Redirect to the SignUp page
+  };
+
   return (
-    <div className="login-container">
+    <div className="signin-container">
       <h1>Welcome Back!</h1>
-      <form className="login-form" onSubmit={handleLogin}>
+      <form className="signin-form" onSubmit={handleLogin}>
         <label htmlFor="email">Email</label>
         <input
           type="email"
@@ -39,6 +48,11 @@ function SignInPage() {
         <button type="submit">Sign In</button>
       </form>
       <p>{message}</p>
+      {/* New User Redirect */}
+      <div className="new-user">
+        <p>New user?</p>
+        <button onClick={handleSignUpRedirect}>Sign Up</button>
+      </div>
     </div>
   );
 }

@@ -1,42 +1,54 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
 
 function SignUpPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // Initialize navigate hook
 
-  const handleSubmit = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
+    setMessage("Processing...");
     try {
-      const response = await axios.post('http://localhost:5000/api/signup', { email, password });
-      setMessage(response.data.message);
+      // Create user with Firebase
+      await createUserWithEmailAndPassword(auth, email, password);
+      setMessage("User registered successfully! Redirecting to Sign In...");
+      
+      // Redirect to Sign In page after 2 seconds
+      setTimeout(() => {
+        navigate("/signin");
+      }, 2000);
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Something went wrong!');
+      setMessage("Error: " + error.message);
     }
   };
 
   return (
     <div className="signup-container">
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Email</label>
+      <h1>Create an Account</h1>
+      <form className="signup-form" onSubmit={handleSignUp}>
+        <label htmlFor="email">Email</label>
         <input
           type="email"
+          id="email"
+          placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
         />
-        <label>Password</label>
+        <label htmlFor="password">Password</label>
         <input
           type="password"
+          id="password"
+          placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
         />
         <button type="submit">Sign Up</button>
       </form>
-      {message && <p>{message}</p>}
+      <p>{message}</p>
     </div>
   );
 }

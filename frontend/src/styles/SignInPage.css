@@ -1,48 +1,22 @@
-.login-container {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    margin: auto;
+.new-user {
+    margin-top: 20px;
     text-align: center;
   }
   
-  .login-container h1 {
-    margin-bottom: 1.5rem;
-    color: #333;
+  .new-user p {
+    font-size: 16px;
   }
   
-  .login-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .login-form label {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    text-align: left;
-  }
-  
-  .login-form input {
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-  
-  .login-form button {
-    padding: 0.75rem;
+  .new-user button {
     background-color: #007bff;
     color: white;
     border: none;
+    padding: 10px 20px;
     border-radius: 5px;
-    font-size: 1rem;
     cursor: pointer;
   }
   
-  .login-form button:hover {
+  .new-user button:hover {
     background-color: #0056b3;
   }
   
