@@ -2,11 +2,7 @@ import React from 'react';
 import SignInPage from './components/SignInPage';
 
 function App() {
-  return (
-    <div>
-      <SignInPage />
-    </div>
-  );
+  return <SignInPage />;
 }
 
 export default App;

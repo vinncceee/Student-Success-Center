@@ -4,17 +4,20 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy package.json and package-lock.json to the container
 COPY package*.json ./
 
-# Install frontend dependencies
+# Install backend dependencies, including devDependencies
 RUN npm install
 
-# Copy the remaining frontend code
+# Install nodemon globally
+RUN npm install -g nodemon
+
+# Copy the remaining backend application code
 COPY . .
 
-# Expose the port the frontend runs on
-EXPOSE 3000
+# Expose the port the backend runs on
+EXPOSE 5000
 
-# Start the React development server
-CMD ["npm", "start"]
+# Start the backend server with nodemon
+CMD ["nodemon", "server.js"]

@@ -1,10 +1,41 @@
-version: '3'
 services:
-  student-success-center:
-    build: .
+  backend:
+    build:
+      context: ./backend # Path to the backend folder
+      dockerfile: Dockerfile # Optional if the Dockerfile is named "Dockerfile"
     ports:
-      - "5000:5000"  # Map your host port to the container port
+      - "5000:5000"
     volumes:
-      - .:/app       # Mounts the current directory to the container, enabling live reloading
-    stdin_open: true
-    tty: true
+      - ./backend:/app
+      - /app/node_modules # Prevent overwriting node_modules in the container
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/studentSuccess
+    depends_on:
+      - mongo
+    command: npm run dev # Use the development command (e.g., with nodemon)
+
+  frontend:
+    build:
+      context: ./frontend # Path to the frontend folder
+      dockerfile: Dockerfile # Optional if the Dockerfile is named "Dockerfile"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app # Sync frontend source files
+      - /app/node_modules # Prevent overwriting node_modules in the container
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+      - CHOKIDAR_USEPOLLING=true # Enable polling for file change detection
+    command: npm start # Run the React development server
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
