@@ -1,33 +1,36 @@
+version: "3.8"
+
 services:
   backend:
     build:
-      context: ./backend # Path to the backend folder
-      dockerfile: Dockerfile # Optional if the Dockerfile is named "Dockerfile"
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
     volumes:
       - ./backend:/app
-      - /app/node_modules # Prevent overwriting node_modules in the container
+      - /app/node_modules
     environment:
       - NODE_ENV=development
       - MONGO_URI=mongodb://mongo:27017/studentSuccess
+      - HOST=0.0.0.0  # ✅ Ensures external access
     depends_on:
       - mongo
-    command: npm run dev # Use the development command (e.g., with nodemon)
+    command: npm run dev
 
   frontend:
     build:
-      context: ./frontend # Path to the frontend folder
-      dockerfile: Dockerfile # Optional if the Dockerfile is named "Dockerfile"
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app # Sync frontend source files
-      - /app/node_modules # Prevent overwriting node_modules in the container
+      - ./frontend:/app
+      - /app/node_modules
     environment:
-      - REACT_APP_API_URL=http://localhost:5000
-      - CHOKIDAR_USEPOLLING=true # Enable polling for file change detection
-    command: npm start # Run the React development server
+      - REACT_APP_API_URL=http://YOUR_MACHINE_IP:5000 # ✅ Replace with your machine's IP
+      - CHOKIDAR_USEPOLLING=true
+    command: npm start
 
   mongo:
     image: mongo:latest

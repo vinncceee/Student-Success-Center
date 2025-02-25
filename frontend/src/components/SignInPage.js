@@ -33,7 +33,7 @@ function SignInPage() {
       <form className="signin-form" onSubmit={handleLogin}>
         <label htmlFor="email">Email</label>
         <input
-          type="email"
+          t     ype="email"
           id="email"
           placeholder="Enter your email"
           value={email}
