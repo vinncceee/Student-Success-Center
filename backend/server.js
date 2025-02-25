@@ -78,6 +78,8 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on http://0.0.0.0:${PORT}`);
+  console.log("\n🚀 Server running at: \x1b[34mhttp://localhost:" + PORT + "\x1b[0m\n");
 });
+
+
 
