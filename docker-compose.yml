@@ -16,7 +16,7 @@ services:
       - HOST=0.0.0.0  # ✅ Ensures external access
     depends_on:
       - mongo
-    command: npm run dev
+    command: sh -c "npm run dev && echo '✅ Backend running at: http://localhost:5000'"
 
   frontend:
     build:
@@ -28,9 +28,9 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - REACT_APP_API_URL=http://YOUR_MACHINE_IP:5000 # ✅ Replace with your machine's IP
+      - REACT_APP_API_URL=http://localhost:5000
       - CHOKIDAR_USEPOLLING=true
-    command: npm start
+    command: sh -c "npm start && echo '✅ Frontend running at: http://localhost:3000'"
 
   mongo:
     image: mongo:latest
