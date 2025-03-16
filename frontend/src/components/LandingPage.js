@@ -1,5 +1,6 @@
     import React, { useState } from "react";
     import axios from "axios"; // Import Axios for API requests
+    import HeaderBar from "./HeaderBar"; // Import the HeaderBar component
     import "../styles/LandingPage.css";
 
     function LandingPage() {
@@ -28,56 +29,61 @@
         }
     };
     
-    
 
     return (
         <div className="landing-page">
-          {!submitted ? (
-            <>
-              <h1>Info for database testing</h1>
-              <form className="landing-form" onSubmit={handleSubmit}>
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  placeholder="Enter your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                />
+          {/* HeaderBar outside of main content */}
+          <HeaderBar /> 
     
-                <label htmlFor="gradeLevel">Grade Level</label>
-                <select
-                  id="gradeLevel"
-                  value={gradeLevel}
-                  onChange={(e) => setGradeLevel(e.target.value)}
-                  required
-                >
-                  <option value="" disabled hidden>Select grade level</option>
-                  <option value="freshman">Undergrad - Freshman</option>
-                  <option value="sophomore">Undergrad - Sophomore</option>
-                  <option value="junior">Undergrad - Junior</option>
-                  <option value="senior">Undergrad - Senior</option>
-                  <option value="masters">Masters</option>
-                  <option value="phd">PhD</option>
-                </select>
+          {/* Main content (actual tutoring components)*/}
+          <div className="content">
+            {!submitted ? (
+              <>
+                <h1>Info for database testing</h1>
+                <form className="landing-form" onSubmit={handleSubmit}>
+                  <label htmlFor="name">Name</label>
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
     
-                <label htmlFor="role">Role</label>
-                <select id="role" value={role} onChange={(e) => setRole(e.target.value)} required>
-                  <option value="" disabled>Select role</option>
-                  <option value="Student">Student</option>
-                  <option value="Tutor">Tutor</option>
-                </select>
+                  <label htmlFor="gradeLevel">Grade Level</label>
+                  <select
+                    id="gradeLevel"
+                    value={gradeLevel}
+                    onChange={(e) => setGradeLevel(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled hidden>Select grade level</option>
+                    <option value="freshman">Undergrad - Freshman</option>
+                    <option value="sophomore">Undergrad - Sophomore</option>
+                    <option value="junior">Undergrad - Junior</option>
+                    <option value="senior">Undergrad - Senior</option>
+                    <option value="masters">Masters</option>
+                    <option value="phd">PhD</option>
+                  </select>
     
-                <button type="submit">Submit</button>
-              </form>
-            </>
-          ) : (
-            <div className="info-success">
-              <h2>Information Submitted</h2>
-              <p>{message}</p>
-            </div>
-          )}
+                  <label htmlFor="role">Role</label>
+                  <select id="role" value={role} onChange={(e) => setRole(e.target.value)} required>
+                    <option value="" disabled>Select role</option>
+                    <option value="Student">Student</option>
+                    <option value="Tutor">Tutor</option>
+                  </select>
+    
+                  <button type="submit">Submit</button>
+                </form>
+              </>
+            ) : (
+              <div className="info-success">
+                <h2>Information Submitted</h2>
+                <p>{message}</p>
+              </div>
+            )}
+          </div>
         </div>
       );
     }
