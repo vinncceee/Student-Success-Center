@@ -5,9 +5,9 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    justify-content: center; /* Center horizontally */
+    align-items: center;    /* Center vertically */
+    height: 100vh;          /* Full viewport height */
 }
 
 /* Style the container for the landing page form */
