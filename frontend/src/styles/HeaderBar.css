@@ -1,0 +1,57 @@
+.header-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to right, #0063AF, #0B3555); /* Gradient background */
+    padding: 2px;
+    z-index: 1000; /* Make sure it's on top of all other content */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: 46px; /* Header Size */
+    display: block;
+    text-align: center; /* Center text horizontally */
+}
+/* TEXT */
+.header-bar h1 {
+    margin: 0;
+    font-size: 44px;
+
+    /* Centering this is insane and took me 45 minutes do not mess with it */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    /* Do not ask me why but !important is necessary here for some reason, otherwise the text color defaults to gray */
+    color: #FFFFFF !important;
+    text-shadow: 0px 0px 1px #F38223, 1px 0px 1px #F38223, 0px 1px 1px #F38223, -1px 0px 1px #F38223, 0px -1px 1px #F38223, -1px -1px 1px #F38223, 1px 1px 1px #F38223, -1px 1px 1px #F38223;
+}
+/* UTA LOGO */
+.header-logo {
+    height: 40px; 
+    width: auto; /* Maintains correct aspect ratio */
+    position: absolute;
+    left: 24px; /* Left Margin */
+    top: 50%; /* Centers Vertically */
+    transform: translateY(-50%); /* Centers Vertically */
+}
+/* Sign Out Button */
+.sign-out-btn {
+    background-color: #c45517;
+    color: white; 
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    height: 33px;
+    width: 90px;
+    border-radius: 16.5px;
+    position: absolute; /* Absolute position */
+    right: 24px; /* Right Margin */
+    top: 50%; /* Centers Vertically */
+    transform: translateY(-50%); /* Centers Vertically */
+    transition: background-color 0.3s ease; /* Transition between colors for OnHover */
+}
+/* Sign Out Button OnHover */
+.sign-out-btn:hover {
+    background-color: #9f3f12; /* Darker shade on hover */
+}
