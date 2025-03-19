@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import HeaderBar from "./HeaderBar";
 import "../styles/LandingPage.css";
+import InfoPanel from "./InfoPanel";
 
 function LandingPage() {
   const [name, setName] = useState("");
@@ -74,6 +75,7 @@ function LandingPage() {
           </div>
         )}
       </div>
+      <InfoPanel />
     </div>
   );
 }
