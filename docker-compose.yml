@@ -10,20 +10,11 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
-    environment:
-      - NODE_ENV=development
-      - MONGO_URI=mongodb://mongo:27017/studentSuccess
-      - HOST=0.0.0.0
+    env_file:
+      - ./backend/.env  # ✅ Load environment variables from .env
     depends_on:
       - mongo
-    command:
-      - sh
-      - -c
-      - |
-        npm run dev &
-        sleep 3
-        echo "🚀 Backend running at: http://localhost:5000"
-        wait
+    command: npm run dev
 
   frontend:
     build:
@@ -36,15 +27,7 @@ services:
       - /app/node_modules
     environment:
       - REACT_APP_API_URL=http://localhost:5000
-      - CHOKIDAR_USEPOLLING=true
-    command:
-      - sh
-      - -c
-      - |
-        npm start &
-        sleep 5
-        echo "🌍 Frontend running at: http://localhost:3000"
-        wait
+    command: npm start
 
   mongo:
     image: mongo:latest
