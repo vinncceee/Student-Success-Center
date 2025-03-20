@@ -1,9 +1,10 @@
+//SigInPage.js
+
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import '../styles/SignInPage.css';
-
+import "../styles/SignInPage.css";
 
 function SignInPage() {
   const [email, setEmail] = useState("");
@@ -16,8 +17,8 @@ function SignInPage() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setMessage("Sign-in successful! Redirecting...");
-      // Redirect to the landing page after successful sign-in
-      setTimeout(() => navigate("/landing"), 2000);
+      // Redirect to the appointments page after successful sign-in
+      setTimeout(() => navigate("/appointments"), 2000);
     } catch (error) {
       setMessage("Error: " + error.message);
     }
@@ -33,7 +34,7 @@ function SignInPage() {
       <form className="signin-form" onSubmit={handleLogin}>
         <label htmlFor="email">Email</label>
         <input
-          t     ype="email"
+          type="email"
           id="email"
           placeholder="Enter your email"
           value={email}
