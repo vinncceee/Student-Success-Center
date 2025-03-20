@@ -3,6 +3,8 @@ import axios from "axios";
 import HeaderBar from "./HeaderBar";
 import "../styles/LandingPage.css";
 import { useNavigate } from "react-router-dom";
+import InfoPanel from "./InfoPanel";
+
 
 function LandingPage() {
     const [storedId, setStoredId] = useState(""); // ID from database
@@ -173,6 +175,7 @@ function LandingPage() {
 
                 {authenticated && <p>✅ Authentication Successful! Redirecting...</p>}
             </div>
+            <InfoPanel />
         </div>
     );
 }
