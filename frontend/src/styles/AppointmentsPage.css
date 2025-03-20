@@ -1,0 +1,101 @@
+/* Main container */
+.appointments-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    padding-top: 20px;
+  }
+  
+  /* Enlarged Main Box */
+  .appointments-box {
+    width: 400px;
+    height: 270px; /* Increased height */
+    background-color: #E9EFFC;
+    border: 2px solid #F38223;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 8px;
+  }
+  
+  /* Title Styling */
+  .appointments-box h2 {
+    text-decoration: underline;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+  }
+  
+  /* Scrollable Appointments List */
+  .appointments-scroll {
+    width: 100%;
+    height: 200px; /* Adjusted for larger box */
+    overflow-y: auto;
+  }
+  
+  .appointments-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .appointments-box li {
+    padding: 8px;
+    background-color: #fff;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    margin: 5px 0;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border 0.3s ease, color 0.3s ease;
+  }
+  
+  .appointments-box li:hover {
+    background-color: #F5D7B4;
+  }
+  
+  /* Selected Appointment - Color Fixed */
+  .selected {
+    background-color: #CD4625 !important; /* Now properly turns red */
+    color: white !important;
+    border: 2px solid #F38223;
+  }
+  
+  /* Edit Button */
+  .edit-button {
+    background-color: #CD4625;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .edit-button:hover {
+    background-color: #a83b1e;
+  }
+  
+  /* Edit Options */
+  .edit-options {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+  }
+  
+  /* Message - Now Outside the Box */
+  .status-message {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
