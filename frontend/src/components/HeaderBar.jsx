@@ -39,20 +39,25 @@ function HeaderBar() {
             setError("ID did not match. Please try again.");
             return;
         }
-
-        // Clear session data and show success message
-        localStorage.removeItem("emailForSignIn");
-        localStorage.removeItem("role");
-        localStorage.removeItem("infoSubmitted");
+    
+        // ✅ Keep email stored but remove other session data
+        const userEmail = localStorage.getItem("emailForSignIn");
+        localStorage.clear();  // Clear all session data
+        if (userEmail) {
+            localStorage.setItem("verifiedUser", userEmail); // ✅ Store verified email for re-login
+        }
+    
         setShowModal(false); // Hide modal
         setSignoutSuccess(true); // Show success message
-
+    
         // Redirect to sign-in page after 2 seconds
         setTimeout(() => {
             setSignoutSuccess(false);
             navigate("/signin");
         }, 2000);
     };
+    
+    
 
     return (
         <div className="header-bar">

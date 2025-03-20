@@ -14,77 +14,101 @@ function LandingPage() {
   const [submitted, setSubmitted] = useState(false);
 
   const navigate = useNavigate();
-  const userEmail = localStorage.getItem("emailForSignIn");
-
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-  // ✅ Check if user exists in the database
+  // ✅ Check if user exists in the database or stored session
   useEffect(() => {
+    const storedEmail = localStorage.getItem("verifiedUser"); // ✅ Keep email after logout
+    const userEmail = localStorage.getItem("emailForSignIn") || storedEmail;
+
     if (!userEmail) {
-      setLoading(false);
-      return;
+        setLoading(false);
+        return;
     }
 
+    // Check if role is already in localStorage (returning user)
+    const storedRole = localStorage.getItem("role");
+    const infoSubmitted = localStorage.getItem("infoSubmitted");
+
+    if (storedRole && infoSubmitted === "true") {
+        console.log("✅ User already logged in, redirecting...");
+        navigate(getDashboardPath(storedRole));
+        return;
+    }
+
+    // If role is not found in localStorage, fetch from database
     axios
       .get(`${API_URL}/api/user/${userEmail}`)
       .then((response) => {
-        if (response.data) {
-          localStorage.setItem("role", response.data.role);
-          setSubmitted(true);
-
-          // ✅ Redirect users based on role
-          if (response.data.role === "Student") navigate("/student-dashboard");
-          if (response.data.role === "Tutor") navigate("/tutor-dashboard");
-          if (response.data.role === "Admin") navigate("/admin-dashboard");
-        }
+          if (response.data) {
+              localStorage.setItem("role", response.data.role);
+              localStorage.setItem("infoSubmitted", "true");
+              localStorage.setItem("emailForSignIn", userEmail); // ✅ Keep email stored
+              navigate(getDashboardPath(response.data.role));
+          }
       })
       .catch((err) => {
-        if (err.response && err.response.status === 404) {
-          console.log("User not found. Allowing registration.");
-          localStorage.removeItem("infoSubmitted");
-          localStorage.removeItem("role");
-          setSubmitted(false);
-        }
+          if (err.response && err.response.status === 404) {
+              console.log("❌ User not found. Allowing registration.");
+              localStorage.removeItem("infoSubmitted");
+              localStorage.removeItem("role");
+          }
       })
       .finally(() => setLoading(false));
-  }, [userEmail, navigate, API_URL]);
+  }, [navigate, API_URL]); // ✅ Corrected dependency array
+
+
+  // ✅ Function to get the correct dashboard path
+  const getDashboardPath = (role) => {
+    switch (role) {
+      case "Student":
+        return "/student-dashboard";
+      case "Tutor":
+        return "/tutor-dashboard";
+      case "Admin":
+        return "/admin-dashboard";
+      default:
+        return "/";
+    }
+  };
 
   // ✅ Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const userEmail = localStorage.getItem("emailForSignIn");
 
     if (!userEmail) {
-      setMessage("❌ Error: User email not found. Please sign in first.");
-      return;
+        setMessage("❌ Error: User email not found. Please sign in first.");
+        return;
     }
 
     if (!idNumber.trim()) {
-      setMessage("❌ Error: ID Number is required.");
-      return;
+        setMessage("❌ Error: ID Number is required.");
+        return;
     }
 
     try {
-      const response = await axios.post(`${API_URL}/api/save-info`, {
-        email: userEmail,
-        name,
-        idNumber, // ✅ Added ID Number
-        gradeLevel,
-        role,
-      });
+        const response = await axios.post(`${API_URL}/api/save-info`, {
+            email: userEmail,
+            name,
+            idNumber,
+            gradeLevel,
+            role,
+        });
 
-      localStorage.setItem("infoSubmitted", "true");
-      localStorage.setItem("role", role);
-      setSubmitted(true);
-      setMessage(response.data.message);
+        // ✅ Store user details permanently
+        localStorage.setItem("infoSubmitted", "true");
+        localStorage.setItem("role", role);
+        localStorage.setItem("verifiedUser", userEmail); // ✅ Preserve email across logins
+        setSubmitted(true);
+        setMessage(response.data.message);
 
-      // ✅ Redirect after submission
-      if (role === "Student") navigate("/student-dashboard");
-      if (role === "Tutor") navigate("/tutor-dashboard");
-      if (role === "Admin") navigate("/admin-dashboard");
+        navigate(getDashboardPath(role));
     } catch (err) {
-      setMessage(`❌ Error: ${err.response?.data?.message || err.message}`);
+        setMessage(`❌ Error: ${err.response?.data?.message || err.message}`);
     }
   };
+
 
   if (loading) return <div>Loading...</div>;
 
