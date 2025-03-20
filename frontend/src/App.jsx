@@ -6,6 +6,7 @@ import LandingPage from "./components/LandingPage";
 import RoleTestPage from "./components/RoleTestPage";
 import StudentDashboard from "./components/StudentDashboard";
 import TutorDashboard from "./components/TutorDashboard";
+import AdminDashboard from "./components/AdminDashboard";
 
 function App() {
   // Retrieve the role from localStorage
@@ -27,6 +28,10 @@ function App() {
       <Route
         path="/tutor-dashboard"
         element={userRole === "Tutor" ? <TutorDashboard /> : <Navigate to="/signin" />}
+      />
+        <Route
+        path="/admin-dashboard"
+        element={userRole === "Admin" ? <AdminDashboard /> : <Navigate to="/signin" />}
       />
     </Routes>
   );
