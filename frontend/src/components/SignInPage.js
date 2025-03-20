@@ -1,3 +1,5 @@
+//SigInPage.js
+
 import React, { useState } from "react";
 import { getAuth, sendSignInLinkToEmail } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
