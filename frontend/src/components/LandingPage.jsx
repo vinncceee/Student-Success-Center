@@ -5,177 +5,176 @@ import "../styles/LandingPage.css";
 import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
-  const [name, setName] = useState("");
-  const [idNumber, setIdNumber] = useState(""); // ✅ Added ID Number
-  const [gradeLevel, setGradeLevel] = useState("");
-  const [role, setRole] = useState("");
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [submitted, setSubmitted] = useState(false);
-
-  const navigate = useNavigate();
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-
-  // ✅ Check if user exists in the database or stored session
-  useEffect(() => {
-    const storedEmail = localStorage.getItem("verifiedUser"); // ✅ Keep email after logout
-    const userEmail = localStorage.getItem("emailForSignIn") || storedEmail;
-
-    if (!userEmail) {
-        setLoading(false);
-        return;
-    }
-
-    // Check if role is already in localStorage (returning user)
-    const storedRole = localStorage.getItem("role");
-    const infoSubmitted = localStorage.getItem("infoSubmitted");
-
-    if (storedRole && infoSubmitted === "true") {
-        console.log("✅ User already logged in, redirecting...");
-        navigate(getDashboardPath(storedRole));
-        return;
-    }
-
-    // If role is not found in localStorage, fetch from database
-    axios
-      .get(`${API_URL}/api/user/${userEmail}`)
-      .then((response) => {
-          if (response.data) {
-              localStorage.setItem("role", response.data.role);
-              localStorage.setItem("infoSubmitted", "true");
-              localStorage.setItem("emailForSignIn", userEmail); // ✅ Keep email stored
-              navigate(getDashboardPath(response.data.role));
-          }
-      })
-      .catch((err) => {
-          if (err.response && err.response.status === 404) {
-              console.log("❌ User not found. Allowing registration.");
-              localStorage.removeItem("infoSubmitted");
-              localStorage.removeItem("role");
-          }
-      })
-      .finally(() => setLoading(false));
-  }, [navigate, API_URL]); // ✅ Corrected dependency array
-
-
-  // ✅ Function to get the correct dashboard path
-  const getDashboardPath = (role) => {
-    switch (role) {
-      case "Student":
-        return "/student-dashboard";
-      case "Tutor":
-        return "/tutor-dashboard";
-      case "Admin":
-        return "/admin-dashboard";
-      default:
-        return "/";
-    }
-  };
-
-  // ✅ Handle Form Submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const [storedId, setStoredId] = useState(""); // ID from database
+    const [swipeMode, setSwipeMode] = useState(true); // Toggle between swipe/manual
+    const [manualId, setManualId] = useState(""); // Manually entered ID
+    const [error, setError] = useState(""); // Error message
+    const [loading, setLoading] = useState(true); // Track loading state
+    const [authenticated, setAuthenticated] = useState(false); // Track if user is verified
+    const [role, setRole] = useState(""); // Store user role
+    const navigate = useNavigate();
     const userEmail = localStorage.getItem("emailForSignIn");
 
-    if (!userEmail) {
-        setMessage("❌ Error: User email not found. Please sign in first.");
-        return;
-    }
+    const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-    if (!idNumber.trim()) {
-        setMessage("❌ Error: ID Number is required.");
-        return;
-    }
+    // ✅ Fetch User Data on Page Load
+    useEffect(() => {
+        if (!userEmail) {
+            setLoading(false);
+            return;
+        }
 
-    try {
-        const response = await axios.post(`${API_URL}/api/save-info`, {
-            email: userEmail,
-            name,
-            idNumber,
-            gradeLevel,
-            role,
-        });
+        axios.get(`${API_URL}/api/user/${userEmail}`)
+            .then((response) => {
+                if (response.data) {
+                    setStoredId(response.data.idNumber.trim());
+                    setRole(response.data.role);
+                    console.log("✅ Stored ID from Database:", response.data.idNumber);
+                } else {
+                    console.error("❌ User not found in API response.");
+                }
+            })
+            .catch((err) => console.error("❌ Error fetching user data:", err))
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [userEmail, API_URL]);
 
-        // ✅ Store user details permanently
-        localStorage.setItem("infoSubmitted", "true");
-        localStorage.setItem("role", role);
-        localStorage.setItem("verifiedUser", userEmail); // ✅ Preserve email across logins
-        setSubmitted(true);
-        setMessage(response.data.message);
+    // ✅ Capture Swipe Data
+    useEffect(() => {
+        if (!swipeMode) return; // Only listen for swipe input when swipe mode is active
 
-        navigate(getDashboardPath(role));
-    } catch (err) {
-        setMessage(`❌ Error: ${err.response?.data?.message || err.message}`);
-    }
-  };
+        let buffer = "";
+        let scanning = false;
 
+        const handleKeyDown = (event) => {
+            if (event.key === "Enter") {
+                scanning = false;
+                processSwipedData(buffer);
+                buffer = "";
+            } else {
+                buffer += event.key;
+                scanning = true;
+            }
+        };
 
-  if (loading) return <div>Loading...</div>;
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [swipeMode]);
 
-  return (
-    <div className="landing-page">
-      <HeaderBar />
-      <div className="content">
-        {!submitted ? (
-          <form className="landing-form" onSubmit={handleSubmit}>
-            <h1>Info for Database Testing</h1>
+    // ✅ Process Swiped Data
+    const processSwipedData = (data) => {
+        console.log("Raw Swiped Data:", data);
 
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+        if (loading || !storedId) {
+            setError("⚠️ Please wait. Loading user data...");
+            return;
+        }
 
-            <label htmlFor="idNumber">ID Number</label> {/* ✅ Added ID Number */}
-            <input
-              type="text"
-              id="idNumber"
-              value={idNumber}
-              onChange={(e) => setIdNumber(e.target.value)}
-              required
-            />
+        const cleanedData = data.replace(/Shift/g, "").trim();
+        const match = cleanedData.match(/\+(\d+)\?/);
+        let extractedId = match ? match[1].trim() : null;
 
-            <label htmlFor="gradeLevel">Grade Level</label>
-            <select
-              id="gradeLevel"
-              value={gradeLevel}
-              onChange={(e) => setGradeLevel(e.target.value)}
-              required
-            >
-              <option value="" disabled hidden>Select grade level</option>
-              <option value="freshman">Undergrad - Freshman</option>
-              <option value="sophomore">Undergrad - Sophomore</option>
-              <option value="junior">Undergrad - Junior</option>
-              <option value="senior">Undergrad - Senior</option>
-              <option value="masters">Masters</option>
-              <option value="phd">PhD</option>
-            </select>
+        if (!extractedId) {
+            setError("❌ Failed to extract ID. Please swipe again.");
+            return;
+        }
 
-            <label htmlFor="role">Role</label>
-            <select
-              id="role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              required
-            >
-              <option value="" disabled>Select role</option>
-              <option value="Student">Student</option>
-              <option value="Tutor">Tutor</option>
-              <option value="Admin">Admin</option> {/* ✅ Added Admin Role */}
-            </select>
+        extractedId = extractedId.replace(/\s+/g, "").trim();
 
-            <button type="submit">Submit</button>
-          </form>
-        ) : (
-          <p>✅ Redirecting you to your dashboard...</p>
-        )}
-        {message && <p>{message}</p>}
-      </div>
-    </div>
-  );
+        console.log("Extracted ID:", extractedId);
+        verifyId(extractedId);
+    };
+
+    // ✅ Verify ID Before Redirecting
+    const verifyId = (inputId) => {
+        console.log("Stored ID:", storedId);
+        console.log("Input ID:", inputId);
+
+        if (inputId !== storedId) {
+            setError(`❌ ID did not match. Expected: ${storedId}, Got: ${inputId}`);
+            return;
+        }
+
+        console.log("✅ Authentication Successful!");
+        setAuthenticated(true);
+
+        // ✅ Redirect to the respective dashboard
+        setTimeout(() => {
+            navigate(getDashboardPath(role));
+        }, 1500);
+    };
+
+    // ✅ Get Dashboard Path Based on Role
+    const getDashboardPath = (role) => {
+        switch (role) {
+            case "Student":
+                return "/student-dashboard";
+            case "Tutor":
+                return "/tutor-dashboard";
+            case "Admin":
+                return "/admin-dashboard";
+            default:
+                return "/";
+        }
+    };
+
+    if (loading) return <div>⏳ Loading...</div>;
+
+    return (
+        <div className="landing-page">
+            <HeaderBar />
+            <div className="content">
+                <h1>Authentication Required</h1>
+
+                {/* Authentication Modal */}
+                <div className="auth-modal">
+                    <h2>Verify Your Identity</h2>
+                    <p>Select a method to authenticate:</p>
+
+                    {/* Toggle Between Swipe and Manual Entry */}
+                    <div className="auth-options">
+                        <button
+                            className={swipeMode ? "active" : ""}
+                            onClick={() => setSwipeMode(true)}
+                            disabled={loading}
+                        >
+                            Swipe ID
+                        </button>
+                        <button
+                            className={!swipeMode ? "active" : ""}
+                            onClick={() => setSwipeMode(false)}
+                            disabled={loading}
+                        >
+                            Enter ID Manually
+                        </button>
+                    </div>
+
+                    {swipeMode ? (
+                        <p>Swipe your ID card using the scanner.</p>
+                    ) : (
+                        <>
+                            <label htmlFor="manual-id">Enter ID:</label>
+                            <input
+                                type="text"
+                                id="manual-id"
+                                value={manualId}
+                                onChange={(e) => setManualId(e.target.value)}
+                                disabled={loading}
+                            />
+                            <button onClick={() => verifyId(manualId)} disabled={loading}>
+                                Confirm
+                            </button>
+                        </>
+                    )}
+
+                    {error && <p className="error-text">{error}</p>}
+                </div>
+
+                {authenticated && <p>✅ Authentication Successful! Redirecting...</p>}
+            </div>
+        </div>
+    );
 }
 
 export default LandingPage;

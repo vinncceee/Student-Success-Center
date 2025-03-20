@@ -13,24 +13,34 @@ function HeaderBar() {
     const [swipeMode, setSwipeMode] = useState(true); // Toggle between swipe/manual
     const [manualId, setManualId] = useState(""); // Manually entered ID
     const userEmail = localStorage.getItem("emailForSignIn");
+    const [loading, setLoading] = useState(true); // ✅ Track loading state
+
+
 
     const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-    // ✅ Fetch user ID from the database when component loads
     useEffect(() => {
         if (userEmail) {
+            console.log("🔄 Fetching user data for:", userEmail);
             axios.get(`${API_URL}/api/user/${userEmail}`)
                 .then((response) => {
+                    console.log("✅ Full API Response:", response.data); // ✅ Debugging
+    
                     if (response.data && response.data.idNumber) {
                         setStoredId(response.data.idNumber.trim()); // ✅ Ensure no extra spaces
-                        console.log("✅ Stored ID from Database:", response.data.idNumber); // ✅ Debugging
+                        console.log("✅ Stored ID from Database:", response.data.idNumber);
                     } else {
-                        console.error("❌ ID not found in database for", userEmail);
+                        console.error("❌ ID not found in API response for", userEmail);
                     }
                 })
-                .catch((err) => console.error("❌ Error fetching user data:", err));
+                .catch((err) => console.error("❌ Error fetching user data:", err))
+                .finally(() => {
+                    setLoading(false); // ✅ Mark API call as complete
+                });
         }
     }, [userEmail, API_URL]);
+    
+    
     
 
     // ✅ Capture Card Swipe Data (Simulated as Keyboard Input)
@@ -57,14 +67,19 @@ function HeaderBar() {
 
     // ✅ Process the Swiped Card Data
     const processSwipedData = (data) => {
-        console.log("Raw Swiped Data:", data); // ✅ Debugging: Log full swipe data
+        console.log("Raw Swiped Data:", data); // ✅ Debugging
     
-        // ✅ Remove all occurrences of "Shift"
-        const cleanedData = data.replace(/Shift/g, "");
+        if (!storedId) {
+            setError("⚠️ Please wait. User data is still loading. Try again.");
+            return;
+        }
+    
+        // ✅ Remove "Shift" from the scanned data
+        const cleanedData = data.replace(/Shift/g, "").trim();
     
         // ✅ Extract the correct student ID (last numeric sequence after "+")
-        const match = cleanedData.match(/\+(\d+)\?/); // Extracts digits after "+"
-        const extractedId = match ? match[1] : null;
+        const match = cleanedData.match(/\+(\d+)\?/);
+        let extractedId = match ? match[1].trim() : null;
     
         if (!extractedId) {
             setError("❌ Failed to extract ID. Please swipe again.");
@@ -72,10 +87,16 @@ function HeaderBar() {
         }
     
         console.log("Cleaned Swipe Data:", cleanedData); // ✅ Debugging
-        console.log("Extracted ID:", extractedId); // ✅ Should now be `1001702150`
+        console.log("Extracted ID Before Fix:", extractedId); // ✅ Debugging
+    
+        // ✅ Ensure ID is a plain string and remove any hidden characters
+        extractedId = extractedId.replace(/\s+/g, "").trim();
+    
+        console.log("Extracted ID After Fix:", extractedId); // ✅ Should now match manual entry exactly
     
         handleSignOut(extractedId);
     };
+    
     
     
 
@@ -86,28 +107,35 @@ function HeaderBar() {
 
     // ✅ Handle Sign-Out
     const handleSignOut = (scannedId) => {
-        console.log("Stored ID in State:", storedId); // ✅ Debugging
-        console.log("Scanned ID:", scannedId); // ✅ Debugging
-
+        console.log("Stored ID in State Before Fix:", storedId); // ✅ Debugging
+        console.log("Scanned ID Before Fix:", scannedId); // ✅ Debugging
+    
         if (!scannedId || scannedId.trim() === "") {
             setError("❌ No ID detected. Please try again.");
             return;
         }
-
+    
         if (!storedId) {
             setError("❌ No stored ID found. Ensure your account has an ID in the database.");
             return;
         }
-
-        if (scannedId !== storedId) {
-            setError(`❌ ID did not match. Expected: ${storedId}, Got: ${scannedId}`);
+    
+        // ✅ Normalize both IDs to prevent hidden mismatches
+        const normalizedStoredId = storedId.toString().trim().replace(/\s+/g, "");
+        const normalizedScannedId = scannedId.toString().trim().replace(/\s+/g, "");
+    
+        console.log("Stored ID After Fix:", normalizedStoredId); // ✅ Debugging
+        console.log("Scanned ID After Fix:", normalizedScannedId); // ✅ Debugging
+    
+        if (normalizedScannedId !== normalizedStoredId) {
+            setError(`❌ ID did not match. Expected: ${normalizedStoredId}, Got: ${normalizedScannedId}`);
             return;
         }
-
+    
         // ✅ Preserve email and role to prevent re-authentication
         const userEmail = localStorage.getItem("emailForSignIn");
         const userRole = localStorage.getItem("role");
-
+    
         localStorage.clear(); // Clear session data
         if (userEmail) {
             localStorage.setItem("verifiedUser", userEmail); // ✅ Keep verified email
@@ -115,16 +143,17 @@ function HeaderBar() {
         if (userRole) {
             localStorage.setItem("role", userRole); // ✅ Keep user role
         }
-
+    
         setShowModal(false); // Hide modal
         setSignoutSuccess(true); // Show success message
-
+    
         // Redirect to sign-in page after 2 seconds
         setTimeout(() => {
             setSignoutSuccess(false);
             navigate("/signin");
         }, 2000);
     };
+    
 
     return (
         <div className="header-bar">

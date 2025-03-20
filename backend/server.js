@@ -77,19 +77,27 @@ app.post("/api/save-info", async (req, res) => {
 // 🔹 API to Check if User Exists
 app.get("/api/user/:email", async (req, res) => {
   try {
-    const { email } = req.params;
-    const user = await User.findOne({ email });
+      const { email } = req.params;
+      const user = await User.findOne({ email });
 
-    if (user) {
-      return res.status(200).json(user);
-    } else {
-      return res.status(404).json({ message: "❌ User not found" });
-    }
+      if (!user) {
+          return res.status(404).json({ message: "❌ User not found" });
+      }
+
+      console.log("✅ Fetched user from DB:", user); // ✅ Debugging
+
+      res.status(200).json({
+          email: user.email,
+          name: user.name,
+          idNumber: user.idNumber.trim(), // ✅ Ensure ID is properly formatted
+          role: user.role
+      });
   } catch (err) {
-    console.error("❌ Error fetching user:", err);
-    res.status(500).json({ message: "❌ Server error", error: err.message });
+      console.error("❌ Error fetching user:", err);
+      res.status(500).json({ message: "❌ Server error", error: err.message });
   }
 });
+
 
 // 🔹 API to Verify ID Number Before Sign-Out
 app.post("/api/verify-id", async (req, res) => {
