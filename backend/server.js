@@ -29,13 +29,35 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// Save User Data
+// Middleware to check role
+function checkRole(role) {
+  return async (req, res, next) => {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role !== role) {
+      return res.status(403).json({ message: "Forbidden: You do not have the correct role" });
+    }
+
+    next();
+  };
+}
+
+
 app.post("/api/save-info", async (req, res) => {
   try {
     const { email, name, gradeLevel, role } = req.body;
 
     if (!email || !name || !gradeLevel || !role) {
       return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // Check if the email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "This email has already been used." });
     }
 
     const user = new User({ email, name, gradeLevel, role });
@@ -47,15 +69,32 @@ app.post("/api/save-info", async (req, res) => {
   }
 });
 
-// Get Users
-app.get("/api/users", async (req, res) => {
+
+
+
+
+// Check if user exists by email
+app.get("/api/user/:email", async (req, res) => {
   try {
-    const users = await User.find();
-    res.status(200).json(users);
+    const { email } = req.params;
+    const user = await User.findOne({ email });
+
+    if (user) {
+      return res.status(200).json(user);
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
   } catch (err) {
-    res.status(500).json({ message: "Error fetching users", error: err.message });
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+
+
+
+
+
+
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
