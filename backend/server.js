@@ -21,6 +21,7 @@ mongoose
 
 // User Schema
 const userSchema = new mongoose.Schema({
+  email: { type: String, required: true },  // Store the user's email
   name: { type: String, required: true },
   gradeLevel: { type: String, required: true },
   role: { type: String, required: true, enum: ["Student", "Tutor"] },
@@ -31,13 +32,13 @@ const User = mongoose.model("User", userSchema);
 // Save User Data
 app.post("/api/save-info", async (req, res) => {
   try {
-    const { name, gradeLevel, role } = req.body;
+    const { email, name, gradeLevel, role } = req.body;
 
-    if (!name || !gradeLevel || !role) {
+    if (!email || !name || !gradeLevel || !role) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = new User({ name, gradeLevel, role });
+    const user = new User({ email, name, gradeLevel, role });
     await user.save();
     res.status(201).json({ message: "User added successfully!" });
   } catch (err) {

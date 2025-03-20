@@ -1,60 +1,78 @@
 import React, { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import '../styles/SignInPage.css';
-
+import "../styles/SignInPage.css";
+import { auth } from "../firebase"; // Import Firebase authentication instance
 
 function SignInPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // React Router hook for navigation
+  const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  // Firebase Action Code Settings
+  const actionCodeSettings = {
+    url: "http://localhost:3000/landing", // Change this to your actual redirect URL
+    handleCodeInApp: true,
+  };
+
+  const handleSendSignInLink = async (e) => {
     e.preventDefault();
+
+    // Restrict sign-in to only `@mavs.uta.edu` emails
+    if (!email.endsWith("@mavs.uta.edu")) {
+      setMessage("Only @mavs.uta.edu email addresses are allowed.");
+      return;
+    }
+
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      setMessage("Sign-in successful! Redirecting...");
-      // Redirect to the landing page after successful sign-in
-      setTimeout(() => navigate("/landing"), 2000);
+      await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+      window.localStorage.setItem("emailForSignIn", email); // Store email for later use
+      setMessage("Sign-in link sent! Check your email.");
     } catch (error) {
       setMessage("Error: " + error.message);
     }
   };
 
-  const handleSignUpRedirect = () => {
-    navigate("/signup"); // Redirect to the SignUp page
+  const handleCompleteSignIn = async () => {
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      let email = window.localStorage.getItem("emailForSignIn");
+
+      if (!email) {
+        email = prompt("Please enter your email to confirm:");
+      }
+
+      if (!email.endsWith("@mavs.uta.edu")) {
+        setMessage("Unauthorized email. Only @mavs.uta.edu emails are allowed.");
+        return;
+      }
+
+      try {
+        const result = await signInWithEmailLink(auth, email, window.location.href);
+        setMessage("Sign-in successful! Redirecting...");
+        window.localStorage.removeItem("emailForSignIn"); // Cleanup
+        setTimeout(() => navigate("/landing"), 2000);
+      } catch (error) {
+        setMessage("Error: " + error.message);
+      }
+    }
   };
 
   return (
     <div className="signin-container">
       <h1>Welcome to UTA Student Success Center</h1>
-      <form className="signin-form" onSubmit={handleLogin}>
-        <label htmlFor="email">Email</label>
+      <form className="signin-form" onSubmit={handleSendSignInLink}>
+        <label htmlFor="email">UTA Email</label>
         <input
-          t     ype="email"
+          type="email"
           id="email"
-          placeholder="Enter your email"
+          placeholder="Enter your @mavs.uta.edu email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Sign In</button>
+        <button type="submit">Send Sign-In Link</button>
       </form>
       <p>{message}</p>
-      {/* New User Redirect */}
-      <div className="new-user">
-        <p>New user?</p>
-        <button onClick={handleSignUpRedirect}>Sign Up</button>
-      </div>
     </div>
   );
 }
