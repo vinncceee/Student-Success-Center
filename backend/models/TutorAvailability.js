@@ -1,22 +1,16 @@
 const mongoose = require("mongoose");
 
-const tutorAvailabilitySchema = new mongoose.Schema({
+const TutorAvailabilitySchema = new mongoose.Schema({
   tutor: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  email: { type: String, required: true },  // Contact info
-  phoneNumber: { type: String, required: false }, 
-  availableTimes: [
+  subjects: [{ type: String, required: true }], // Subjects tutor can teach
+  availability: [
     {
-      day: { type: String, required: true }, // Example: "Monday"
-      slots: [
-        {
-          startTime: { type: String, required: true },
-          endTime: { type: String, required: true }
-        }
-      ],
-      subject: { type: String, required: true }
+      day: { type: String, required: true }, // e.g., "Monday"
+      timeSlots: [{ type: String, required: true }] // e.g., ["10:00 AM - 12:00 PM", "3:00 PM - 5:00 PM"]
     }
   ],
-  submittedAt: { type: Date, default: Date.now },
+  isApproved: { type: Boolean, default: false }, // Admin approval required
+  createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model("TutorAvailability", tutorAvailabilitySchema);
+module.exports = mongoose.model("TutorAvailability", TutorAvailabilitySchema);
