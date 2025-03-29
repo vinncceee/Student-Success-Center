@@ -62,6 +62,32 @@
   .appointments-box li:hover {
     background-color: #F5D7B4;
   }
+
+
+  /* Schedule Button Styling */
+  .schedule-session-btn-container {
+    margin-top: 16px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* Aligns child (button) to the right */
+  }
+
+
+  .schedule-session-btn {
+    background-color: #3b82f6;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+
+  .schedule-session-btn:hover {
+    background-color: #2563eb;
+  }
   
   /* Selected Appointment - Color Fixed */
   .selected {
