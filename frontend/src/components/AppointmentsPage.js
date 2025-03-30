@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import BookingSessionModal from "./BookingSessionModal";
 import "../styles/AppointmentsPage.css";
 
 function AppointmentsPage() {
@@ -7,6 +8,7 @@ function AppointmentsPage() {
   const [showEditOptions, setShowEditOptions] = useState(false);
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   useEffect(() => {
     // Hardcoded appointments data
@@ -73,7 +75,20 @@ function AppointmentsPage() {
             ))}
           </ul>
         </div>
+
+        {/* button to open the book appointment modal */}
+        <div className="schedule-session-btn-container">
+          <button className="schedule-session-btn" onClick={() => setIsBookingModalOpen(true)}>
+            Schedule a Session
+          </button>
+        </div>
       </div>
+
+      {/* Booking modal should be rendered here */}
+      <BookingSessionModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+      />
 
       {selectedAppointment && !showEditOptions && (
         <button className="edit-button" onClick={handleEditClick}>Edit Appointment</button>
