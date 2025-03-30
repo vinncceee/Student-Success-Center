@@ -1,12 +1,17 @@
 import React from "react";
 import HeaderBar from "./HeaderBar";
+import AuthRequest from "./AuthRequest"
+import UnassignedRoles from "./UnassignedRoles"
 
 const AdminDashboard = () => {
   return (
+    
     <div>
       <HeaderBar />
-      <h1>Welcome to the Admin Dashboard</h1>
-      <p>You have admin privileges.</p>
+      <main className="rightPanel">
+        <AuthRequest />
+        <UnassignedRoles />
+      </main>
     </div>
   );
 };
