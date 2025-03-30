@@ -31,6 +31,7 @@ function LandingPage() {
                 if (response.data) {
                     setStoredId(response.data.idNumber.trim());
                     setRole(response.data.role);
+                    localStorage.setItem("role", response.data.role)
                     console.log("✅ Stored ID from Database:", response.data.idNumber);
                 } else {
                     console.error("❌ User not found in API response.");

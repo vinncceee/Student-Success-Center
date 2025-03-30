@@ -8,7 +8,7 @@ import SupportSection from "./SupportSection";
 //make the height flex, widht set (can disapear if too small)
 function InfoPanel() {
   return (
-    <main className="infoPanel">
+    <main className="rightPanel">
       <AnnouncementsSection />
       <HoursSection />
       <SupportSection />
