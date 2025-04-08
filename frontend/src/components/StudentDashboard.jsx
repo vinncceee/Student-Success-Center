@@ -1,26 +1,28 @@
-// student-dashboard.jsx
 import React from "react";
 import HeaderBar from "./HeaderBar";
 import InfoPanel from "./InfoPanel";
 import AppointmentsPage from "./AppointmentsPage";
+import Profile from "./Profile";
 
 const StudentDashboard = () => {
-  return (
-    <div>
-      <HeaderBar />
-      <h2>Welcome to the Student Dashboard</h2>
+  // Get email from localStorage (same as LandingPage)
+  const userEmail = localStorage.getItem("emailForSignIn");
 
-      {/* Wrapper for InfoPanel to ensure proper alignment */}
+  return (
+    <div className="student-dashboard" style={{ position: 'relative' }}>
+      <HeaderBar />
+      {userEmail && <Profile email={userEmail} />}
+      
+      <h2 style={{ marginTop: '20px' }}>Welcome to the Student Dashboard</h2>
+
       <div className="info-panel-container">
         <InfoPanel />
       </div>
       <div className="appointments">
-      <AppointmentsPage />
+        <AppointmentsPage />
       </div>
-      
     </div>
   );
 };
-
 
 export default StudentDashboard;
