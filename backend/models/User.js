@@ -1,21 +1,42 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
-  phoneNumber: { type: String, required: false },
-  password: { type: String, required: true },
-  role: { type: String, enum: ["Student", "Tutor", "Admin"], required: true },
-  idCardNumber: { type: String, unique: true, required: false },
-  isVerified: { type: Boolean, default: false }, // Admin approval
-  profile: {
-    qualifications: { type: String, required: false }, // Tutor expertise
-    bio: { type: String, required: false },
-    learningGoals: { type: String, required: false }, // For students
-    gradeLevel: { type: String, required: false }, // Student grade level
-    subjectExpertise: [{ type: String, required: false }] // Tutor expertise
+const UserSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true
   },
-  createdAt: { type: Date, default: Date.now },
+  name: {
+    type: String,
+    required: true
+  },
+  idNumber: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  gradeLevel: {
+    type: String,
+    enum: ['Freshman', 'Sophomore', 'Junior', 'Senior'],
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ['Student', 'Tutor', 'Admin'],
+    required: true
+  }
+}, {
+  timestamps: true
 });
 
-module.exports = mongoose.model("User", userSchema);
+// Transform _id -> id and remove __v
+UserSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false, // removes __v
+  transform: (_, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+  }
+});
+
+module.exports = mongoose.model('User', UserSchema);
