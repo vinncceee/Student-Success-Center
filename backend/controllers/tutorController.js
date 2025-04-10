@@ -1,5 +1,6 @@
 const TutorAvailability = require('../models/TutorAvailability');
 const User = require('../models/User');
+const Slot = require('../models/Slot');
 
 // POST /api/tutors/:tutorId/availability
 exports.createAvailability = async (req, res) => {
