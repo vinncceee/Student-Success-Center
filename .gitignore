@@ -11,5 +11,3 @@ node_modules/
 logs/
 *.log
 
-# Ignore uploaded profile images
-/uploads/

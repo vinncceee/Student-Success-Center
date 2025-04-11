@@ -1,9 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
-const multer = require("multer");
 require("dotenv").config();
 
 const app = express();
@@ -13,125 +10,46 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
-// Configure persistent upload directory
-const UPLOAD_BASE = '/persistent/uploads';
-const PROFILE_IMAGES_DIR = path.join(UPLOAD_BASE, 'profile-images');
+// 🔹 Connect to MongoDB
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Ensure directory exists
-if (!fs.existsSync(PROFILE_IMAGES_DIR)) {
-  fs.mkdirSync(PROFILE_IMAGES_DIR, { recursive: true });
-}
-
-// Serve uploaded files
-app.use('/uploads', express.static(UPLOAD_BASE));
-
-// Configure Multer for persistent storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, PROFILE_IMAGES_DIR);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    const filename = `${req.params.email}-${Date.now()}${ext}`;
-    cb(null, filename);
-  }
-});
-
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith('image/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image files are allowed!'), false);
-    }
-  }
-});
-
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ MongoDB connected"))
-.catch(err => console.error("❌ MongoDB connection error:", err));
-
-// User Schema
+// 🔹 User Schema with `idNumber` and Unique Email
 const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true }, // Ensure unique emails
   name: { type: String, required: true },
-  idNumber: { type: String, required: true, unique: true },
+  idNumber: { type: String, required: true, unique: true }, // Ensure unique ID Numbers
   gradeLevel: { type: String, required: true },
-  role: { type: String, required: true, enum: ["Student", "Tutor", "Admin"] },
-  profileImage: { type: String }
+  role: { type: String, required: true, enum: ["Student", "Tutor", "Admin"] }, // Include Admin
 });
 
 const User = mongoose.model("User", userSchema);
 
-// Upload Profile Image Endpoint
-app.post("/api/upload-profile-image/:email", upload.single('profileImage'), async (req, res) => {
+// 🔹 Middleware to Check Role
+async function checkRole(req, res, next) {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
-
-    const relativePath = path.join('profile-images', req.file.filename);
-    
-    await User.updateOne(
-      { email: req.params.email },
-      { $set: { profileImage: relativePath } }
-    );
-
-    res.status(200).json({ 
-      message: '✅ Profile image updated successfully',
-      imagePath: relativePath
-    });
-  } catch (err) {
-    console.error('❌ Upload error:', err);
-    
-    // Clean up failed upload
-    if (req.file?.path) {
-      fs.unlink(req.file.path, () => {});
-    }
-
-    res.status(500).json({ 
-      message: '❌ Error uploading image',
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
-  }
-});
-
-// Get User Data Endpoint
-app.get("/api/user/:email", async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.params.email });
+    const user = await User.findOne({ email: req.body.email });
     if (!user) {
       return res.status(404).json({ message: "❌ User not found" });
     }
 
-    const responseData = {
-      email: user.email,
-      name: user.name,
-      idNumber: user.idNumber.trim(),
-      role: user.role
-    };
-
-    if (user.profileImage) {
-      responseData.profileImage = `${req.protocol}://${req.get('host')}/uploads/${user.profileImage.replace(/\\/g, '/')}`;
+    if (user.role !== req.role) {
+      return res.status(403).json({ message: "❌ Forbidden: Incorrect role" });
     }
 
-    res.status(200).json(responseData);
-  } catch (err) {
-    console.error("❌ Error fetching user:", err);
-    res.status(500).json({ 
-      message: "❌ Server error",
-      error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
+    next();
+  } catch (error) {
+    console.error("Error checking role:", error);
+    res.status(500).json({ message: "❌ Server error", error: error.message });
   }
-});
+}
 
-// Save User Info Endpoint
+// 🔹 API to Save User Info (New Registration)
 app.post("/api/save-info", async (req, res) => {
   try {
     const { email, name, idNumber, gradeLevel, role } = req.body;
@@ -140,11 +58,13 @@ app.post("/api/save-info", async (req, res) => {
       return res.status(400).json({ message: "⚠️ All fields are required" });
     }
 
+    // 🔹 Check if Email or ID already exists
     const existingUser = await User.findOne({ $or: [{ email }, { idNumber }] });
     if (existingUser) {
       return res.status(400).json({ message: "⚠️ Email or ID Number already exists" });
     }
 
+    // Save new user
     const user = new User({ email, name, idNumber, gradeLevel, role });
     await user.save();
     res.status(201).json({ message: "✅ User added successfully!" });
@@ -154,7 +74,32 @@ app.post("/api/save-info", async (req, res) => {
   }
 });
 
-// Verify ID Endpoint
+// 🔹 API to Check if User Exists
+app.get("/api/user/:email", async (req, res) => {
+  try {
+      const { email } = req.params;
+      const user = await User.findOne({ email });
+
+      if (!user) {
+          return res.status(404).json({ message: "❌ User not found" });
+      }
+
+      console.log("✅ Fetched user from DB:", user); // ✅ Debugging
+
+      res.status(200).json({
+          email: user.email,
+          name: user.name,
+          idNumber: user.idNumber.trim(), // ✅ Ensure ID is properly formatted
+          role: user.role
+      });
+  } catch (err) {
+      console.error("❌ Error fetching user:", err);
+      res.status(500).json({ message: "❌ Server error", error: err.message });
+  }
+});
+
+
+// 🔹 API to Verify ID Number Before Sign-Out
 app.post("/api/verify-id", async (req, res) => {
   try {
     const { email, idNumber } = req.body;
@@ -171,14 +116,5 @@ app.post("/api/verify-id", async (req, res) => {
   }
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error('❌ Server error:', err);
-  res.status(500).json({ 
-    message: '❌ Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined
-  });
-});
-
-// Start Server
+// 🔹 Start Server
 app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
