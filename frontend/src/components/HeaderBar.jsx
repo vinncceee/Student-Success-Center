@@ -22,7 +22,7 @@ function HeaderBar() {
     useEffect(() => {
         if (userEmail) {
             console.log("🔄 Fetching user data for:", userEmail);
-            axios.get(`${API_URL}/api/user/${userEmail}`)
+            axios.get(`${API_URL}/api/users/email/${userEmail}`)
                 .then((response) => {
                     console.log("✅ Full API Response:", response.data); // ✅ Debugging
     
