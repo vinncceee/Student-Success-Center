@@ -5,10 +5,17 @@ const generateSlots = require('../services/slotService');
 // GET /api/admin/availability/pending
 exports.getPendingAvailabilities = async (req, res) => {
   try {
-    const pending = await TutorAvailability.find({ isApproved: false }).populate('tutorId');
-    res.json(pending);
+    const pending = await TutorAvailability.find({ isApproved: false }).populate('tutorId', 'name email idNumber gradeLevel');
+    
+    // Normalize tutorId to `tutor` for frontend consistency
+    const withTutorInfo = pending.map(avail => ({
+      ...avail.toObject(),
+      tutor: avail.tutorId,
+    }));
+
+    res.json(withTutorInfo);
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching pending availabilities:', err);
     res.status(500).json({ message: 'Error fetching pending availabilities' });
   }
 };
@@ -35,7 +42,28 @@ exports.approveAvailability = async (req, res) => {
 
     res.status(200).json({ message: 'Availability approved and slots generated', slotsCount: slots.length });
   } catch (err) {
-    console.error(err);
+    console.error('Internal error approving availability:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+// DELETE /api/admin/availability/:availabilityId
+exports.deleteAvailability = async (req, res) => {
+  try {
+    const { availabilityId } = req.params;
+
+    const deleted = await TutorAvailability.findByIdAndDelete(availabilityId);
+    if (!deleted) {
+      return res.status(404).json({ message: 'Availability not found' });
+    }
+
+    // Optionally delete related slots too
+    await Slot.deleteMany({ tutorId: deleted.tutorId });
+
+    res.status(200).json({ message: 'Availability and related slots deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting availability:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
