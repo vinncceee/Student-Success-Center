@@ -3,22 +3,50 @@ const User = require('../models/User');
 const Slot = require('../models/Slot');
 
 // POST /api/tutors/:tutorId/availability
+// exports.createAvailability = async (req, res) => {
+//   try {
+//     const { weeklySchedule } = req.body;
+//     const tutorId = req.params.tutorId;
+
+//     const existing = await TutorAvailability.findOne({ tutorId });
+//     if (existing) return res.status(400).json({ message: 'Availability already exists.' });
+
+//     const newAvailability = new TutorAvailability({ tutorId, weeklySchedule });
+//     await newAvailability.save();
+
+//     res.status(201).json(newAvailability);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// };
+
+
 exports.createAvailability = async (req, res) => {
   try {
     const { weeklySchedule } = req.body;
     const tutorId = req.params.tutorId;
 
+    console.log("Received tutorId:", tutorId);
+    console.log("Received weeklySchedule:", JSON.stringify(weeklySchedule, null, 2));
+
     const existing = await TutorAvailability.findOne({ tutorId });
-    if (existing) return res.status(400).json({ message: 'Availability already exists.' });
+    if (existing) {
+      return res.status(400).json({ message: 'This tutor already has availability. Please delete it first.' });
+    }
+    if (existing) {
+      console.log("Existing availability found:", existing);
+    }
 
     const newAvailability = new TutorAvailability({ tutorId, weeklySchedule });
     await newAvailability.save();
 
     res.status(201).json(newAvailability);
   } catch (err) {
+    console.error("❌ Server error in createAvailability:", err);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 // DELETE /api/tutors/:tutorId/availability
 exports.deleteAvailability = async (req, res) => {
@@ -42,7 +70,7 @@ exports.deleteAvailability = async (req, res) => {
       console.error(err);
       res.status(500).json({ message: 'Server error during deletion' });
     }
-  };
+};
 
 // GET /api/tutors/:tutorId/availability (can be used for filter)
 exports.getAvailabilityByTutor = async (req, res) => {

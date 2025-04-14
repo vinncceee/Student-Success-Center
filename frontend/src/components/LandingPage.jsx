@@ -8,6 +8,7 @@ import InfoPanel from "./InfoPanel";
 
 function LandingPage() {
     const [storedId, setStoredId] = useState(""); // ID from database
+    const [userObject, setUserObject] = useState({}); // User object
     const [swipeMode, setSwipeMode] = useState(true); // Toggle between swipe/manual
     const [manualId, setManualId] = useState(""); // Manually entered ID
     const [error, setError] = useState(""); // Error message
@@ -30,6 +31,7 @@ function LandingPage() {
             .then((response) => {
                 if (response.data) {
                     console.log(response.data);
+                    setUserObject(response.data);
                     setStoredId(response.data.idNumber.trim());
                     setRole(response.data.role);
                     localStorage.setItem("role", response.data.role)
@@ -104,10 +106,17 @@ function LandingPage() {
         console.log("✅ Authentication Successful!");
         setAuthenticated(true);
 
+
+        // Store User info in Local Storage
+        localStorage.setItem("user", JSON.stringify(userObject));
+
         // ✅ Redirect to the respective dashboard
-        setTimeout(() => {
-            navigate(getDashboardPath(role));
-        }, 1500);
+        // setTimeout(() => {
+        //     navigate(getDashboardPath(role));
+        // }, 1500);
+
+        window.location.href = getDashboardPath(userObject.role);
+
     };
 
     // ✅ Get Dashboard Path Based on Role

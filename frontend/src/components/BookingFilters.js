@@ -63,7 +63,7 @@ const BookingFilters = ({ onFilterChange }) => {
       </div>
 
       {/* Apply Button */}
-      <button onClick={applyFilters} className="apply-filters-btn">
+      <button onClick={applyFilters} className="uta-btn uta-btn-secondary full-width apply-button">
         Apply Filters
       </button>
     </div>

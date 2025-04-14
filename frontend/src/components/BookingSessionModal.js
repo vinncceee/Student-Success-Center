@@ -44,12 +44,13 @@ const BookingSessionModal = ({ isOpen, onClose }) => {
       />
       <div className="schedule-btn-container">
       <button
-      className={`schedule-btn ${selectedTutorId ? "enabled" : "disabled"}`}
-      disabled={!selectedTutorId}
-    onClick={handleSchedule}
-  >
+  className="uta-btn uta-btn-primary"
+  disabled={!selectedTutorId}
+  onClick={handleSchedule}
+>
   Schedule
 </button>
+
 
       </div>
     </Modal>

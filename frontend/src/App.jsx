@@ -12,6 +12,12 @@ function App() {
   // Read the role once into state (so it triggers re-renders properly)
   const [role] = useState(() => localStorage.getItem("role"));
 
+
+  const [user] = useState(() => {
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
+  
   /**
    * ProtectedRoute
    * - If no role in localStorage, redirect to /signin
@@ -57,7 +63,7 @@ function App() {
         path="/tutor-dashboard"
         element={
           <ProtectedRoute requiredRole="Tutor">
-            <TutorDashboard />
+            <TutorDashboard user={user}/>
           </ProtectedRoute>
         }
       />
@@ -68,7 +74,7 @@ function App() {
         element={
           <ProtectedRoute requiredRole="Admin">
             <AdminDashboard />
-          </ProtectedRoute>
+         </ProtectedRoute>
         }
       />
     </Routes>
