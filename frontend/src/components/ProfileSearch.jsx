@@ -1,116 +1,166 @@
-import React, {useState} from "react";
-import "../styles/ProfileSearch.css"
+import React, { useState, useEffect } from "react";
+import "../styles/ProfileSearch.css";
 
 function ProfileSearch() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [people, setPeople] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [roleFilter, setRoleFilter] = useState('all');
+  // Modal-related states
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-    //list of people with ids here
-    const people = [
-        { id: 100112341, name: "John Doe", Role: "Student" },
-        { id: 100112342, name: "Jane Smith", Role: "Student" },
-        { id: 100112343, name: "Alice Johnson", Role: "Student" },
-        { id: 1001123451, name: "Bob Williams", Role: "Student" },
-        { id: 100112344, name: "John Doe", Role: "Student" },
-        { id: 100112345, name: "Jane Smith", Role: "Student" },
-        { id: 100112346, name: "Alice Johnson", Role: "Student" },
-        { id: 1001123471, name: "Bob Williams", Role: "Student" },
-        { id: 100112348, name: "John Doe", Role: "Student" },
-        { id: 100112349, name: "Jane Smith", Role: "Student" },
-        { id: 1001123450, name: "Alice Johnson", Role: "Student" },
-        { id: 100112323, name: "Bob Williams", Role: "Student" },
-        { id: 1001123454, name: "John Doe", Role: "Tutor" },
-        { id: 100114562, name: "Jane Smith", Role: "Tutor" },
-        { id: 100769209, name: "Alice Johnson", Role: "Tutor" },
-        { id: 100105800, name: "Bob Williams", Role: "Tutor" },
-        { id: 100000000, name: "John Doe", Role: "Tutor" },
-        { id: 10011232367, name: "Bob Williams", Role: "Tutor" },
-        { id: 100112345467, name: "John Doe", Role: "Tutor" },
-        { id: 10011456267, name: "Jane Smith", Role: "Tutor" },
-        { id: 10076920967, name: "Alice Johnson", Role: "Tutor" },
-        { id: 10010580067, name: "Bob Williams", Role: "Tutor" },
-        { id: 10000000067, name: "John Doe", Role: "Tutor" },
-      ];
+  // 1) Fetch ALL users once on mount
+  useEffect(() => {
+    const fetchAllUsers = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        // Replace with your real endpoint
+        const response = await fetch("http://localhost:5000/api/users");
 
-      const filteredPeople = people.filter(person =>
-        person.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
 
-      return (
-        <main className="outerPanel">
-          <main className="innerPanel">
-            <h3 className="profileSearchHeader">Profile Search</h3>
-    
-            {/* Search Input Section */}
-            <section className="searchBarSection">
+        const data = await response.json();
+        setPeople(data);
+      } catch (err) {
+        console.error(err);
+        setError(err.message || "Something went wrong fetching users.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllUsers();
+  }, []);
+
+  // 2) Filter the users in the front end
+
+  // 2A) Filter by name: only show names that START WITH `searchTerm` (case-insensitive).
+  let filteredPeople = people.filter((person) =>
+    person.name?.toLowerCase().startsWith(searchTerm.toLowerCase())
+  );
+
+  // 2B) Filter by role if not 'all'
+  filteredPeople = filteredPeople.filter((person) => {
+    if (roleFilter === "all") return true;
+    return person.role?.toLowerCase() === roleFilter;
+  });
+
+  // Handler when a user in the list is clicked
+  const handleUserClick = (user) => {
+    setSelectedUser(user);
+    setShowModal(true); // open the modal
+  };
+
+  // Handler to close the modal
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedUser(null);
+  };
+
+  return (
+    <main className="outerPanel">
+      <main className="innerPanel">
+        <h3 className="profileSearchHeader">Profile Search</h3>
+
+        {/* Search Input Section */}
+        <section className="searchBarSection">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            className="searchInput"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <div className="radioGroup">
+            <label>
               <input
-                type="text"
-                placeholder="Search by name..."
-                className="searchInput"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                type="radio"
+                name="role"
+                value="all"
+                checked={roleFilter === "all"}
+                onChange={() => setRoleFilter("all")}
               />
-    
-              <div className="radioGroup">
-                <label>
-                  <input
-                    type="radio"
-                    name="role"
-                    value="all"
-                    checked={roleFilter === 'all'}
-                    onChange={() => setRoleFilter('all')}
-                  />
-                  All
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="role"
-                    value="student"
-                    checked={roleFilter === 'student'}
-                    onChange={() => setRoleFilter('student')}
-                  />
-                  Student
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="role"
-                    value="tutor"
-                    checked={roleFilter === 'tutor'}
-                    onChange={() => setRoleFilter('tutor')}
-                  />
-                  Tutor
-                </label>
-              </div>
-            </section>
-    
-            {/* People List Section */}
-            <section className="profileSearchSubSec">
-              <div className="scrollInner">
-                <ul className="peopleList">
-                {people.map((person, index) => {
-                    const name = `${person.name}`.padEnd(15, " ");
-                    const id = `${person.id}`.padEnd(13, " ");
-                    const role = `${person.Role}`;
+              All
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="student"
+                checked={roleFilter === "student"}
+                onChange={() => setRoleFilter("student")}
+              />
+              Student
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="tutor"
+                checked={roleFilter === "tutor"}
+                onChange={() => setRoleFilter("tutor")}
+              />
+              Tutor
+            </label>
+          </div>
+        </section>
 
-                    const line = `${name}${id}${role}`;
+        {/* Loading / Error handling */}
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
 
-                    return (
-                        <li key={index} className="personItem">
-                        <pre className="personName">{line}</pre>
-                        </li>
-                    );
-                    })}
-                </ul>
-              </div>
+        {/* People List Section */}
+        <section className="profileSearchSubSec">
+          <div className="scrollInner">
+            <ul className="peopleList">
+              {filteredPeople.map((person) => {
+                // Optionally format each user line
+                const name = person.name?.padEnd(15, " ") || "";
+                const id = String(person.idNumber)?.padEnd(13, " ");
+                const role = person.role || "";
+                const line = `${name}${id}${role}`;
 
-            </section>
-          </main>
-        </main>
-      );
-  }
-  
+                return (
+                  <li
+                    key={person.idNumber}
+                    className="personItem"
+                    onClick={() => handleUserClick(person)} // <--- click handler
+                    style={{ cursor: "pointer" }} // for clarity
+                  >
+                    <pre className="personName">{line}</pre>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </section>
+
+        {/* Modal (conditionally rendered) */}
+        {showModal && selectedUser && (
+          <div className="modalBackdrop">
+            <div className="modalContent">
+              <h2>User Info</h2>
+              <p><strong>Name:</strong> {selectedUser.name}</p>
+              <p><strong>ID Number:</strong> {selectedUser.idNumber}</p>
+              <p><strong>Role:</strong> {selectedUser.role}</p>
+
+              {/* Add any other info you have in selectedUser */}
+              {/* e.g., <p>Email: {selectedUser.email}</p> */}
+
+              <button onClick={closeModal}>Close</button>
+            </div>
+          </div>
+        )}
+      </main>
+    </main>
+  );
+}
 
 export default ProfileSearch;
