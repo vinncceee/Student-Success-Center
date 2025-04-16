@@ -144,20 +144,30 @@ function ProfileSearch() {
 
         {/* Modal (conditionally rendered) */}
         {showModal && selectedUser && (
-          <div className="modalBackdrop">
-            <div className="modalContent">
-              <h2>User Info</h2>
-              <p><strong>Name:</strong> {selectedUser.name}</p>
-              <p><strong>ID Number:</strong> {selectedUser.idNumber}</p>
-              <p><strong>Role:</strong> {selectedUser.role}</p>
+        <div className="modalBackdrop">
+          <div className="modalContent">
+            <h2>User Info</h2>
 
-              {/* Add any other info you have in selectedUser */}
-              {/* e.g., <p>Email: {selectedUser.email}</p> */}
+            {/* NEW – profile picture (round avatar) */}
+            {selectedUser.profileImage && (
+              <img
+                src={selectedUser.profileImage}
+                alt={`${selectedUser.name}'s profile`}
+                className="modalAvatar"
+                onError={(e) => {          // fallback if broken URL
+                  e.target.src = "public/img/avatar-placeholder.png";
+                }}
+              />
+            )}
 
-              <button onClick={closeModal}>Close</button>
-            </div>
+            <p><strong>Name:</strong> {selectedUser.name}</p>
+            <p><strong>ID Number:</strong> {selectedUser.idNumber}</p>
+            <p><strong>Role:</strong> {selectedUser.role}</p>
+
+            <button onClick={closeModal}>Close</button>
           </div>
-        )}
+        </div>
+      )}
       </main>
     </main>
   );

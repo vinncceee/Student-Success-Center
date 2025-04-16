@@ -122,3 +122,12 @@
     width: 90%;
     text-align: center;
   }
+
+  .modalAvatar {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;   /* crop/scale nicely */
+    border-radius: 50%;  /* round avatar */
+    margin: 0 auto 1rem; /* center + space below */
+    display: block;
+  }

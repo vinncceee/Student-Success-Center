@@ -98,3 +98,30 @@ exports.verifyIdNumber = async (req, res) => {
     res.status(500).json({ message: '❌ Server error', error: err.message });
   }
 };
+
+exports.updateRole = async (req, res) => {
+  try {
+    console.log("CALLED!!!!!!!")
+    const { idNumber } = req.params;
+    const { role }     = req.body;
+
+    // Validate role early (keeps DB hit small if invalid)
+    if (!["Student", "Tutor"].includes(role)) {
+      return res.status(400).json({ message: "Role must be 'Student' or 'Tutor'." });
+    }
+
+    const user = await User.findOneAndUpdate(
+      { idNumber },                  // query
+      { role },                      // update
+      { new: true }                  // return the updated doc
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    res.json(user);                  // 200 OK with updated user
+  } catch (err) {
+    
+  }
+};
