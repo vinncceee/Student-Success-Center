@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Button from './ui/Button';
 import { MdDelete } from "react-icons/md";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import '../styles/TutorAvailabilityForm.css';
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
@@ -34,7 +36,6 @@ export default function TutorAvailabilityForm({ tutorId, onClose }) {
 
         const isValid = start && end && start < end && subjectArray.length > 0;
 
-        // Check for overlap with previous valid blocks in the same day
         const overlaps = validBlocks.some(b =>
           (start < b.endTime && end > b.startTime)
         );
@@ -83,14 +84,13 @@ export default function TutorAvailabilityForm({ tutorId, onClose }) {
       weeklySchedule: validateSchedule(schedule)
     };
 
-    console.log('Submitting payload:', payload);
     try {
       await axios.post(`${API_URL}/api/tutors/${tutorId}/availability`, payload);
-      alert('Availability submitted successfully!');
+      toast.success("Availability submitted successfully!");
       onClose();
     } catch (err) {
       const msg = err?.response?.data?.message || 'Submission failed.';
-  alert(msg);
+      toast.error(msg);
     }
   };
 
