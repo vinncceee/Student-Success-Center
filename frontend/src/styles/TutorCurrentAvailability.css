@@ -1,0 +1,67 @@
+.availability-card {
+  background-color: #e9effc;
+  border: 2px solid #f47c20;
+  border-radius: 20px;
+  padding: 1.5rem;
+  margin: 2rem auto;
+  max-width: 600px;
+  font-family: "Nunito Sans", sans-serif;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.availability-card h3 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #204eb1;
+  margin-bottom: 1rem;
+  text-align: center;
+  text-decoration: underline;
+}
+
+.schedule-list {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 1.25rem;
+}
+
+.schedule-list li {
+  margin-bottom: 0.5rem;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* .uta-btn {
+  font-family: "Nunito Sans", sans-serif;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 0.6rem 1.25rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.uta-btn-primary {
+  background-color: #204eb1;
+  color: #fff;
+}
+
+.uta-btn-secondary {
+  background-color: #9aabd0;
+  color: #fff;
+}
+
+.uta-btn-danger {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.uta-btn:hover {
+  opacity: 0.9;
+} */
