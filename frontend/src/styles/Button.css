@@ -40,6 +40,17 @@
   }
 
 
+
+  .uta-btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  .uta-btn:hover {
+    opacity: 0.9;
+  }
+
+
   /* Optional class to make any button full width */
 .uta-btn.full-width {
     width: 100%;
