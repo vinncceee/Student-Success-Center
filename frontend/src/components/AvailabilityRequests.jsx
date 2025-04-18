@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/AvailabilityRequests.css';
 import { FaCheck, FaTrash } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -18,15 +20,18 @@ export default function AvailabilityRequests() {
       setAvailabilities(res.data);
     } catch (err) {
       console.error('Failed to fetch availability:', err);
+      toast.error('Failed to fetch pending availability requests.');
     }
   };
 
   const handleApprove = async (id) => {
     try {
-      await axios.patch(`${API_URL}/api/admin/availability/${id}/approve`);
+      await axios.post(`${API_URL}/api/admin/availability/${id}/approve`);
       setAvailabilities(prev => prev.filter(a => a._id !== id));
+      toast.success('Availability request approved successfully');
     } catch (err) {
       console.error('Approval failed:', err);
+      toast.error('Failed to approve availability request');
     }
   };
 
@@ -34,8 +39,10 @@ export default function AvailabilityRequests() {
     try {
       await axios.delete(`${API_URL}/api/admin/availability/${id}`);
       setAvailabilities(prev => prev.filter(a => a._id !== id));
+      toast.success('Availability request deleted successfully');
     } catch (err) {
-      console.error('Delete failed:', err);
+      console.error('Delete failed:', err.message);
+      toast.error('Failed to delete availability request');
     }
   };
 
@@ -50,8 +57,8 @@ export default function AvailabilityRequests() {
           {availabilities.map((item) => (
             <div key={item._id} className="availability-entry">
               <div className="availability-header">
-                <span className="tutor-name">👤 {item.tutor?.name || 'Unnamed Tutor'}</span>
-                <span className="day-count">📅 {item.weeklySchedule.length} day(s)</span>
+                <span className="tutor-name">{item.tutor?.name || 'Unnamed Tutor'}</span>
+                <span className="day-count">{item.weeklySchedule.length} day(s)</span>
               </div>
 
               <ul className="availability-details">
@@ -60,7 +67,7 @@ export default function AvailabilityRequests() {
                     <strong>{dayItem.day}</strong>:&nbsp;
                     {dayItem.blocks.map((block, j) => (
                       <span key={j} className="time-block">
-                        ⏰ {block.startTime}–{block.endTime} <em>({block.subjects.join(', ')})</em>
+                        {block.startTime}–{block.endTime} <em>({block.subjects.join(', ')})</em>
                         {j < dayItem.blocks.length - 1 ? ', ' : ''}
                       </span>
                     ))}

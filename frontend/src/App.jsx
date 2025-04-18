@@ -7,6 +7,8 @@ import RoleTestPage from "./components/RoleTestPage";
 import StudentDashboard from "./components/StudentDashboard";
 import TutorDashboard from "./components/TutorDashboard";
 import AdminDashboard from "./components/AdminDashboard";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"
 
 function App() {
   // Read the role once into state (so it triggers re-renders properly)
@@ -40,7 +42,9 @@ function App() {
   }
 
   return (
-    <Routes>
+    <>
+
+<Routes>
       {/* Unprotected routes */}
       <Route path="/" element={<Navigate to="/signin" replace />} />
       <Route path="/signin" element={<SignInPage />} />
@@ -74,10 +78,15 @@ function App() {
         element={
           <ProtectedRoute requiredRole="Admin">
             <AdminDashboard />
-         </ProtectedRoute>
+          </ProtectedRoute>
         }
       />
     </Routes>
+    
+      <ToastContainer position="top-center" autoClose={3000} />
+    </>
+    
+  
   );
 }
 

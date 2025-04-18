@@ -1,28 +1,30 @@
-import React, { useState } from "react";
+// BookingFilters.jsx
+import React, { useState, useMemo } from "react";
 import "../styles/booking.css";
 
-const BookingFilters = ({ onFilterChange }) => {
+const BookingFilters = ({ onFilterChange, availableSlots = [] }) => {
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedMode, setSelectedMode] = useState("");
 
-  // List of subjects (could come from API later)
-  const subjects = ["CSE-3295", "Math 101", "Physics 201"];
+  const subjects = useMemo(() => {
+    const allSubjects = availableSlots.flatMap(slot => slot.subjects || []);
+    return Array.from(new Set(allSubjects));
+  }, [availableSlots]);
 
-  // Handle filter changes
+  const modes = useMemo(() => {
+    const allModes = availableSlots.map(slot => slot.mode || "Online");
+    return Array.from(new Set(allModes));
+  }, [availableSlots]);
+
   const applyFilters = () => {
-    onFilterChange({
-      subject: selectedSubject,
-      date: selectedDate,
-      mode: selectedMode,
-    });
+    onFilterChange({ subject: selectedSubject, date: selectedDate, mode: selectedMode });
   };
 
   return (
     <div className="filters-container">
       <h3 className="filters-title">Filters</h3>
 
-      {/* Subject Filter */}
       <div className="filter-group">
         <label className="filter-label">Subject</label>
         <select
@@ -31,13 +33,12 @@ const BookingFilters = ({ onFilterChange }) => {
           className="filter-select"
         >
           <option value="">All Subjects</option>
-          {subjects.map((subject) => (
+          {subjects.map(subject => (
             <option key={subject} value={subject}>{subject}</option>
           ))}
         </select>
       </div>
 
-      {/* Date Filter */}
       <div className="filter-group">
         <label className="filter-label">Date</label>
         <input
@@ -48,7 +49,6 @@ const BookingFilters = ({ onFilterChange }) => {
         />
       </div>
 
-      {/* Mode Filter */}
       <div className="filter-group">
         <label className="filter-label">Mode</label>
         <select
@@ -57,12 +57,12 @@ const BookingFilters = ({ onFilterChange }) => {
           className="filter-select"
         >
           <option value="">Any Mode</option>
-          <option value="Online">Online</option>
-          <option value="In Person">In Person</option>
+          {modes.map(mode => (
+            <option key={mode} value={mode}>{mode}</option>
+          ))}
         </select>
       </div>
 
-      {/* Apply Button */}
       <button onClick={applyFilters} className="uta-btn uta-btn-secondary full-width apply-button">
         Apply Filters
       </button>
