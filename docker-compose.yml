@@ -24,6 +24,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+      - profile_images:/persistent/uploads
     environment:
       - REACT_APP_API_URL=http://localhost:5000
     command: npm start
@@ -38,3 +39,4 @@ services:
 
 volumes:
   mongo-data:
+  profile_images:

@@ -24,6 +24,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     enum: ['Student', 'Tutor', 'Admin'],
     required: true
+  },
+  // PROFILE-SPECIFIC ADDITION
+  profileImage: {
+    type: String
   }
 }, {
   timestamps: true
@@ -32,7 +36,7 @@ const UserSchema = new mongoose.Schema({
 // Transform _id -> id and remove __v
 UserSchema.set('toJSON', {
   virtuals: true,
-  versionKey: false, // removes __v
+  versionKey: false,
   transform: (_, ret) => {
     ret.id = ret._id;
     delete ret._id;

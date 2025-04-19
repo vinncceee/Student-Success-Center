@@ -11,3 +11,5 @@ node_modules/
 logs/
 *.log
 
+# Ignore uploaded profile images (Profile component addition)
+/uploads/

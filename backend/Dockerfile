@@ -1,23 +1,25 @@
-# Use a lightweight Node.js image
 FROM node:18-alpine
-
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to the container
+# Create upload directory
+RUN mkdir -p /persistent/uploads/profile-images && \
+    chown -R node:node /persistent/uploads
+
+# Copy package files first (better caching)
 COPY package*.json ./
 
-# Install backend dependencies, including devDependencies
+# Install ALL dependencies (including multer)
 RUN npm install
 
 # Install nodemon globally
 RUN npm install -g nodemon
 
-# Copy the remaining backend application code
+# Copy remaining files
 COPY . .
 
-# Expose the port the backend runs on
-EXPOSE 5000
+# Create symlink for uploads
+RUN ln -s /persistent/uploads /app/uploads
 
-# Start the backend server with nodemon
+EXPOSE 5000
+USER node
 CMD ["nodemon", "server.js"]
