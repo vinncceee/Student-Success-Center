@@ -50,7 +50,9 @@ const BookingSessionModal = ({ isOpen, onClose }) => {
       const selectedSlot = slots.find((slot) => slot.id === selectedSlotId);
       if (!selectedSlot) return;
 
-      const studentId = localStorage.getItem("studentId");
+      const user = JSON.parse(localStorage.getItem("user"));
+      const studentId = user?.id;
+      console.log("studentid for student modal was " + studentId);
       await axios.post(`${API_URL}/api/slots/${selectedSlotId}/book`, { studentId });
 
       setSlots(prev => prev.filter(slot => slot.id !== selectedSlotId));

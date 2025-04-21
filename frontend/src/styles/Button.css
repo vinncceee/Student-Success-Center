@@ -45,6 +45,10 @@
     background-color: #dc3545;
     color: #fff;
   }
+
+  .uta-btn-danger:hover {
+    background-color: #c82333;
+  }
   
   .uta-btn:hover {
     opacity: 0.9;

@@ -1,4 +1,4 @@
-.rightPanel {
+.info-panel{
   position: fixed;
   right: 2vh; /* Keep it 2vh from the right */
   
@@ -8,7 +8,7 @@
   /* Dynamically calculate height */
   height: calc(100vh - 13vh); /* Ensures margins remain proportional */
 
-  width: 27vh; /* Keep width the same */
+  width: 27vh; 
   background-color: #204eb1;
   
   /* Border and Styling */
@@ -23,22 +23,3 @@
   display: flex;
 }
 
-.leftPanel {
-  position: fixed;
-  left: 2vh; 
-  top: 6vh; 
-  height: calc(100vh - 13vh);
-  
-  /* Increase from 31vh to 33vh (or larger) to add more gap */
-  right: 34vh;
-  
-  background-color: #204eb1;
-  border-style: solid;
-  border-width: 5px;
-  border-color: #f38223;
-  border-radius: 23px;
-  
-  flex-direction: column;
-  padding: 1.5rem;
-  display: flex;
-}

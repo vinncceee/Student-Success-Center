@@ -1,120 +1,75 @@
-/* Main Profile Container */
+/* Profile Container - uses full height/width of grid box */
 .profile-container {
-    position: fixed;
-    width: 370px;
-    height: 116px;
-    top: 80px;
-    left: 45px;
-    border-radius: 22.35px;
-    border: 1px solid #F38223;
-    background-color: #9AABD0;
-    z-index: 1000;
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Avatar Container */
-  .profile-avatar {
-    width: 84.92px;
-    height: 87.6px;
-    border-radius: 50%;
-    border: 3px solid #F38223;
-    background-color: white;
-    position: absolute;
-    top: 9.83px;
-    left: 17.88px;
-    overflow: hidden;
-  }
-  
-  /* Avatar Image */
-  .profile-avatar img {
-    width: 86.73px;
-    height: 87.6px;
-    position: relative;
-    left: -0.9px; /* (86.73 - 84.92)/2 ≈ 0.9 to center */
-    object-fit: cover;
-  }
-  
-  /* Inner Box */
-  .profile-inner-box {
-    width: 232px;
-    height: 101px;
-    border-radius: 23.35px;
-    border: 1px solid #F38223;
-    background-color: #E9EFFC;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding-left: 20px;
-    box-sizing: border-box;
-    margin-left: auto;
-    margin-right: 10px;
-  }
-  
-  /* Profile Items */
-  .profile-item {
-    margin-bottom: 8px;
-    color: #000000;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    line-height: 1.2;
-  }
-  
-  .profile-item:last-child {
-    margin-bottom: 0;
-  }
-  
-  .profile-item strong {
-    font-weight: 600;
-  }
+  width: 100%;
+  height: 100%;
+  background-color: #9AABD0;
+  border: 2px solid #F38223;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  /* padding: 1rem; */
+  box-sizing: border-box;
+}
 
-  /* Add these new styles at the bottom of your existing Profile.css */
-
-.upload-button {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    background: #F38223;
-    border: 2px solid white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    z-index: 10;
-  }
-  
-  .upload-button:hover {
-    background: #e06b0e;
-  }
-  
-  .plus-icon {
-    color: white;
-    width: 18px;  /* Feather icons use width/height */
-    height: 18px;
-    stroke-width: 2; /* Controls line thickness */
-  }
-  
+/* Avatar Container */
 .profile-avatar {
+  width: 100px;
+  height: 100px;
+  margin: 1rem;
+  border-radius: 50%;
+  border: 3px solid #F38223;
+  background-color: white;
+  overflow: hidden;
   position: relative;
-  display: inline-block; /* Changed to inline-block */
+  flex-shrink: 0;
 }
 
-  .plus-icon {
-  display: block;
-  filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
+/* Upload button overlay */
 .upload-button {
-  background: transparent;
-  border: none;
-  padding: 0;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: #F38223;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.upload-button:hover {
+  background: #d96600;
+  transform: scale(1.2);
+}
+
+
+/* Inner info box */
+.profile-inner-box {
+  flex: 1;
+  height: 90%;
+  margin-right: 1rem;
+  background-color: #E9EFFC;
+  border: 1px solid #F38223;
+  border-radius: 10px;
+  padding: 0.75rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
 }

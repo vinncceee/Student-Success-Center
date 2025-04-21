@@ -14,7 +14,7 @@
 /* TEXT */
 .header-bar h1 {
     margin: 0;
-    font-size: 44px;
+    font-size: 35px;
 
     /* Centering this is insane and took me 45 minutes do not mess with it */
     position: absolute;
@@ -28,7 +28,7 @@
 }
 /* UTA LOGO */
 .header-logo {
-    height: 40px; 
+    height: 30px; 
     width: auto; /* Maintains correct aspect ratio */
     position: absolute;
     left: 24px; /* Left Margin */

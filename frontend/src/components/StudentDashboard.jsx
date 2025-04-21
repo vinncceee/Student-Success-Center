@@ -1,32 +1,50 @@
-// student-dashboard.jsx
-import React from "react";
+import React, { useState } from "react";
 import HeaderBar from "./HeaderBar";
 import InfoPanel from "./InfoPanel";
 import AppointmentsPage from "./AppointmentsPage";
+import TodaysAvailableSlots from "./TodaysAvailableSlots";
 import Calendar from "./Calendar";
 import Profile from "./Profile";
+import "../styles/StudentDashboard.css";
 
-const StudentDashboard = () => {
-  const userEmail = localStorage.getItem("emailForSignIn");
+const StudentDashboard = ({ user }) => {
+  const [refreshAppointmentsFlag, setRefreshAppointmentsFlag] = useState(false);
+
+  const triggerRefreshAppointments = () => {
+    setRefreshAppointmentsFlag((prev) => !prev);
+  };
+
   return (
     <div>
       <HeaderBar />
-      {userEmail && <Profile email={userEmail} />} {/* PROFILE ADDITION */}
-      <h2>Welcome to the Student Dashboard</h2>
-      {/* Wrapper for InfoPanel to ensure proper alignment */}
-      <div className="info-panel-container">
+
+      <main className="student-left-panel">
+        <div className="student-profile-chat-container">
+          <div className="student-profile">
+            <Profile email={user?.email} />
+          </div>
+          <div className="student-chat">Chat</div>
+        </div>
+
+        <div className="student-section-box student-available-turors">
+          <TodaysAvailableSlots user={user} onBookSuccess={triggerRefreshAppointments} />
+        </div>
+
+        <div className="student-section-box student-appointments">
+          <AppointmentsPage user={user} refreshTrigger={refreshAppointmentsFlag} />
+        </div>
+
+        <div className="student-section-box student-calendar">
+        <Calendar user={user} />
+        </div>
+      </main>
+
+      <main className="student-right-panel">
         <InfoPanel />
-      </div>
-      <div className="appointments">
-      <AppointmentsPage />
-      </div>
-      <div className="calendar-container">
-      <Calendar />
-      </div>
+      </main>
     </div>
   );
 };
 
 
 export default StudentDashboard;
-
