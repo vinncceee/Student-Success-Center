@@ -5,7 +5,7 @@ import AppointmentsPage from "./AppointmentsPage";
 import TodaysAvailableSlots from "./TodaysAvailableSlots";
 import Calendar from "./Calendar";
 import Profile from "./Profile";
-import "../styles/StudentDashboard.css";
+import "../styles/studentDashboard.css";
 
 const StudentDashboard = ({ user }) => {
   const [refreshAppointmentsFlag, setRefreshAppointmentsFlag] = useState(false);

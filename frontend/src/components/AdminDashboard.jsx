@@ -8,16 +8,31 @@ import Profile from "./Profile";
 import Calendar from "./Calendar";
 import "../styles/AdminDashboard.css"; //leftPanel is in InfoPanel
 
+const ProfileWrapper = ({ children }) => (
+  <div className="profileBlock">{children}</div>
+);
+
 const AdminDashboard = () => {
   const userEmail = localStorage.getItem("emailForSignIn"); // Get admin's email
   return (
     <div>
       <HeaderBar />
-      {userEmail && <Profile email={userEmail} />}
+      
       <main className="leftPanel">
-        <ProfileSearch />
-        <AvailabilityRequests />
-        {/*<Calendar />*/}
+        {/* column 1 – profile then search */}
+        <div className="sideColumn">
+          <ProfileWrapper>                          {/* NEW wrapper */}
+            {userEmail && <Profile email={userEmail} />}
+          </ProfileWrapper>
+
+          <ProfileSearch />
+        </div>
+
+        {/* column 2 – requests then calendar */}
+        <div className="calendarColumn">
+          <AvailabilityRequests />
+          <Calendar />
+        </div>
       </main>
       <main className="rightPanel">
         <AuthRequest />
