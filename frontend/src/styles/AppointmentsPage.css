@@ -1,131 +1,97 @@
-/* Main container */
 .appointments-container {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  height: 100vh;
-  padding-top: 20px;
-
-  /* Add this line 👇 */
-  margin-top: 40px;
 }
 
-  
-  /* Enlarged Main Box */
-  .appointments-box {
-    width: 400px;
-    height: 270px; /* Increased height */
-    background-color: #E9EFFC;
-    border: 2px solid #F38223;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    border-radius: 8px;
-  }
-  
-  /* Title Styling */
-  .appointments-box h2 {
-    text-decoration: underline;
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #333;
-    text-align: center;
-  }
-  
-  /* Scrollable Appointments List */
-  .appointments-scroll {
-    width: 100%;
-    height: 200px; /* Adjusted for larger box */
-    overflow-y: auto;
-  }
-  
-  .appointments-box ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .appointments-box li {
-    padding: 8px;
-    background-color: #fff;
-    border: 2px solid transparent;
-    border-radius: 5px;
-    margin: 5px 0;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease, border 0.3s ease, color 0.3s ease;
-  }
-  
-  .appointments-box li:hover {
-    background-color: #F5D7B4;
-  }
+.appointments-box {
+  position: relative;
+  background-color: #E9EFFC;
+  border: 2px solid #F38223;
+  border-radius: 10px;
+  padding: 1rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
+/* Title */
+.appointments-box h2 {
+  text-align: center;
+  color: #333;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  text-decoration: underline;
+}
 
-  /* Schedule Button Styling */
-  .schedule-session-btn-container {
-    margin-top: 16px;
-    width: 100%;
-    display: flex;
-    justify-content: flex-end; /* Aligns child (button) to the right */
-  }
+/* Scrollable appointments list */
+.appointments-scroll {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 3.5rem; /* space for bottom action */
+}
 
+/* Scrollbar Styling */
+.appointments-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.appointments-scroll::-webkit-scrollbar-thumb {
+  background-color: #f38223;
+  border-radius: 4px;
+}
+.appointments-scroll::-webkit-scrollbar-track {
+  background-color: transparent;
+}
 
-  .schedule-session-btn {
-    background-color: #3b82f6;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 400;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
+/* Appointment list */
+.appointments-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 
-  .schedule-session-btn:hover {
-    background-color: #2563eb;
-  }
-  
-  /* Selected Appointment - Color Fixed */
-  .selected {
-    background-color: #CD4625 !important; /* Now properly turns red */
-    color: white !important;
-    border: 2px solid #F38223;
-  }
-  
-  /* Edit Button */
-  .edit-button {
-    background-color: #CD4625;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-  }
-  
-  .edit-button:hover {
-    background-color: #a83b1e;
-  }
-  
-  /* Edit Options */
-  .edit-options {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    margin-top: 10px;
-  }
-  
-  /* Message - Now Outside the Box */
-  .status-message {
-    margin-top: 10px;
-    font-size: 14px;
-    font-weight: bold;
-    text-align: center;
-  }
-  
+.appointments-box li {
+  padding: 8px;
+  margin-bottom: 8px;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: left;
+}
+
+.appointments-box li:hover {
+  background-color: #fce7d8;
+}
+
+.appointments-box li.selected {
+  background-color: #fce7d8;
+  border-color: #F38223;
+}
+
+/* No appointments message */
+.no-appointments {
+  font-style: italic;
+  text-align: center;
+  color: #666;
+  margin-top: 1rem;
+}
+
+/* Shared styles for fixed bottom actions */
+.schedule-session-btn-container,
+.edit-options {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Button consistency */
+/* .edit-options button,
+.schedule-session-btn-container button {
+  flex: 1;
+} */
