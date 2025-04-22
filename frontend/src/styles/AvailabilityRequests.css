@@ -6,8 +6,6 @@
     border-radius: 22px;
     margin-top: 1rem;
     padding: 1.25rem;
-    max-width: 450px;
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-self: center;
@@ -106,4 +104,54 @@
     color: red;
     transform: scale(1.15);
   }
-  
+
+  /* ──────────────────────────────────────────────────────────────
+   AVAILABILITY REQUESTS – keep same width as the calendar,
+   fixed overall height, and use a horizontal scrollbar.
+   ─────────────────────────────────────────────────────────── */
+
+/* 1️⃣  Container: stretch to the full width of .calendarColumn */
+/* 1️⃣  The blue container itself */
+.calendarColumn .availability-container {
+  width: 95%;        /* ← whatever width you chose earlier         */
+  max-width: 95%;    /* prevent growth when cards overflow          */
+  flex-shrink: 0;    /* don’t let flexbox enlarge the parent column */
+  box-sizing: border-box;
+}
+
+/* 2️⃣  The inner scroll strip */
+.calendarColumn .availability-scroll {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;   /* horizontal scrollbar                       */
+  overflow-y: hidden; /* no vertical scroll                         */
+  min-width: 0;       /* ✨ MOST IMPORTANT — lets it respect max‑width */
+}
+
+.calendarColumn .availability-scroll::-webkit-scrollbar-thumb {
+  background-color: #f38223;
+  border-radius: 10px;
+}
+.calendarColumn .availability-scroll::-webkit-scrollbar-track {
+  background: #e9effc;
+}
+
+/* — Firefox — */
+.calendarColumn .availability-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #f38223 #e9effc;  /* thumb / track */
+}
+
+/* 3️⃣  Each card keeps the old fixed width */
+.calendarColumn .availability-entry {
+  flex: 0 0 340px;   /* fixed‑width card that won’t stretch parent   */
+}
+
+/* 4️⃣  “No pending requests” message still occupies height */
+.calendarColumn .availability-text {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  line-height: 16vh;    /* ~ (min‑height – padding) for centering */
+  white-space: normal;  /* allow wrapping                      */
+}
