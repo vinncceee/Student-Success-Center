@@ -23,7 +23,7 @@ const StudentDashboard = ({ user }) => {
           <div className="student-profile">
             <Profile email={user?.email} />
           </div>
-          <div className="student-chat">Chat</div>
+          <div className="student-attendance">Student Attendance</div>
         </div>
 
         <div className="student-section-box student-available-turors">

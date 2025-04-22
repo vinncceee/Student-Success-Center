@@ -33,6 +33,9 @@ const Calendar = ({ user }) => {
     };
 
     fetchAppointments();
+    const interval = setInterval(fetchAppointments, 1000); // Re-fetch every 2 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
+
   }, [user]);
 
   const month = currentDate.getMonth();
@@ -61,12 +64,9 @@ const Calendar = ({ user }) => {
           >
             <span>{dayNum}</span>
             <div className="events-container">
-  {(events[dateStr] || []).slice(0, 1).map((e, idx) => (
+  {(events[dateStr] || []).map((e, idx) => (
     <div key={idx} className="event">{e}</div>
   ))}
-  {(events[dateStr]?.length > 1) && (
-    <div className="more-events">+{events[dateStr].length - 1} more</div>
-  )}
 </div>
           </div>
         );
