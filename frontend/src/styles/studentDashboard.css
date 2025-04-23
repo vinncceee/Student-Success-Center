@@ -20,9 +20,10 @@
 .student-left-panel {
     position: fixed;
     top: 6vh;
+    bottom: 1vh;
     left: 2vh;
     right: 36vh;
-    height: calc(100vh - 8vh);
+    
     background-color: #204eb1;
     border: 5px solid #f38223;
     border-radius: 23px;
@@ -52,7 +53,7 @@
   }
   
   /* Chat takes remaining space */
-  .student-chat {
+  .student-attendance {
     background-color: #d0d0d0;
     border-radius: 10px;
     padding: 1rem;

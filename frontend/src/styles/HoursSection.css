@@ -17,7 +17,7 @@
   /* Inner scrollable container */
   .scrollInner {
     /* Takes full available height */
-    height: 90%;
+    height: 80%;
     
     /* Enable scrolling only in the inner container */
     overflow-y: auto;
@@ -29,6 +29,10 @@
     margin-right: -1rem;
     padding-right: 1rem;
     box-sizing: border-box;
+
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #f38223 #e9effc;
   }
   
   /* Style your scrollbar inside .scrollInner */

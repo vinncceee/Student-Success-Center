@@ -61,6 +61,9 @@ const Calendar = ({ user, isAdmin }) => {
     };
 
     fetchAppointments();
+    const interval = setInterval(fetchAppointments, 1000); // Re-fetch every 2 seconds
+    return () => clearInterval(interval); // Cleanup on unmount
+
   }, [user, isAdmin]);
 
   const openModal = (date) => {
@@ -111,24 +114,12 @@ const Calendar = ({ user, isAdmin }) => {
                   Appointment
                 </div>
               )}
-
-              {/* For students: show one + "+X more" */}
-              {!isAdmin && (
-                <>
-                  {dayEvents.slice(0, 1).map((e, idx) => (
-                    <div key={idx} className="event">{e}</div>
-                  ))}
-                  {dayEvents.length > 1 && (
-                    <div
-                      className="more-events"
-                      onClick={() => openModal(dateStr)}
-                      style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                    >
-                      +{dayEvents.length - 1} more
-                    </div>
-                  )}
-                </>
-              )}
+              
+              {/* Student's here */}
+              {!isAdmin &&
+                (events[dateStr] || []).map((e, idx) => (
+                  <div key={idx} className="event">{e}</div>
+                ))}
             </div>
           </div>
         );
