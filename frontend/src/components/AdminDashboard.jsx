@@ -31,8 +31,8 @@ const AdminDashboard = () => {
         {/* column 2 – requests then calendar */}
         <div className="calendarColumn">
           <AvailabilityRequests />
-          <Calendar />
-        </div>
+          <Calendar isAdmin={true} />
+          </div>
       </main>
       <main className="rightPanel">
         <AuthRequest />

@@ -55,6 +55,6 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;   /* anchor to bottom of leftPanel   */
-  gap: 4.5rem;                 /* space between Requests & Calendar*/
+  gap: 2rem;                 /* space between Requests & Calendar*/
   /* padding-top: 20rem;  ⬅️  delete this line so it’s not gigantic */
 }

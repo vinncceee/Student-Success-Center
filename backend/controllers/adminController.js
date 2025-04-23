@@ -2,6 +2,7 @@ const TutorAvailability = require('../models/TutorAvailability');
 const Slot = require('../models/Slot');
 const generateSlots = require('../services/slotService');
 
+
 // GET /api/admin/availability/pending
 exports.getPendingAvailabilities = async (req, res) => {
   try {
@@ -65,5 +66,19 @@ exports.deleteAvailability = async (req, res) => {
   } catch (err) {
     console.error('Error deleting availability:', err);
     res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// GET /api/admin/appointments
+exports.getAllAppointments = async (req, res) => {
+  try {
+    const bookings = await Slot.find({ isBooked: true })
+      .populate("studentId", "name email")
+      .populate("tutorId", "name email");
+
+    res.status(200).json(bookings);
+  } catch (err) {
+    console.error("Error fetching all appointments:", err);
+    res.status(500).json({ message: "Failed to fetch appointments" });
   }
 };

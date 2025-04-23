@@ -63,6 +63,7 @@ const Calendar = ({ user, isAdmin }) => {
     fetchAppointments();
     const interval = setInterval(fetchAppointments, 1000); // Re-fetch every 2 seconds
     return () => clearInterval(interval); // Cleanup on unmount
+
   }, [user, isAdmin]);
 
   const openModal = (date) => {
@@ -113,8 +114,7 @@ const Calendar = ({ user, isAdmin }) => {
                   Appointment
                 </div>
               )}
-
-
+              
               {/* Student's here */}
               {!isAdmin &&
                 (events[dateStr] || []).map((e, idx) => (
