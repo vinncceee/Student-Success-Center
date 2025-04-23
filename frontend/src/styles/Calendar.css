@@ -63,7 +63,7 @@
   background-color: #f5c8b5;
 
   /*added to make it stay on top of calendar, could be fixed with spacing changes */
-  z-index: 1000;
+  z-index: 800;
 }
 
 .calendar-days {
