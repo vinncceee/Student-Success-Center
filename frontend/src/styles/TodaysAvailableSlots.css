@@ -57,6 +57,7 @@
   margin-bottom: 8px;
   background-color: #fff;
   border: 1px solid transparent;
+  border-left: 5px solid #f38223;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
