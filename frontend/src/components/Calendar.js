@@ -4,7 +4,7 @@ import "../styles/Calendar.css";
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-const Calendar = ({ user, isAdmin }) => {
+const Calendar = ({ user, isAdmin, isTutor }) => {
   const [events, setEvents] = useState({});
   const [detailedEvents, setDetailedEvents] = useState({}); // ⬅️ for admin detailed view
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -18,7 +18,10 @@ const Calendar = ({ user, isAdmin }) => {
 
         if (isAdmin) {
           res = await axios.get(`${API_URL}/api/admin/appointments`);
-        } else if (user?.id) {
+        } else if(isTutor) {
+          res = await axios.get(`${API_URL}/api/tutors/${user.id}/bookings`);
+        }
+         else if (user?.id) {
           res = await axios.get(`${API_URL}/api/students/${user.id}/bookings`);
         } else {
           return;
@@ -111,7 +114,7 @@ const Calendar = ({ user, isAdmin }) => {
                   onClick={() => openModal(dateStr)}
                   style={{ cursor: 'pointer', textDecoration: 'underline' }}
                 >
-                  Appointment
+                  Appointments
                 </div>
               )}
               

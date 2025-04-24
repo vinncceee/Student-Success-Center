@@ -45,20 +45,28 @@ const TutorCurrentAvailability = ({ tutorId, onRequestNew }) => {
       <h3>Your Current Availability</h3>
       {availability ? (
         <>
-          <p>Status: <strong>{availability.isApproved ? "Approved" : "Pending"}</strong></p>
+          <div className="availability-status">
+  <span className="status-label">Approval Status:</span>
+  <span className={`status-badge ${availability.isApproved ? "approved" : "pending"}`}>
+    {availability.isApproved ? "Approved" : "Pending"}
+  </span>
+</div>
+
           <ul className="schedule-list">
-            {availability.weeklySchedule.map((day, i) => (
-              <li key={i}>
-                <strong>{day.day}</strong>:&nbsp;
-                {day.blocks.map((b, j) => (
-                  <span key={j}>
-                    {b.startTime}–{b.endTime}
-                    {j < day.blocks.length - 1 ? ", " : ""}
-                  </span>
-                ))}
-              </li>
-            ))}
-          </ul>
+  {availability.weeklySchedule.map((day, i) => (
+    <li key={i}>
+      <strong>{day.day}</strong>
+      <div className="time-blocks">
+      {day.blocks.map((b, j) => (
+  <span key={j} className="time-slot">
+    {b.startTime} – {b.endTime}
+  </span>
+))}
+
+      </div>
+    </li>
+  ))}
+</ul>
           <div className="button-group">
             <button className="uta-btn uta-btn-danger" onClick={handleDelete}>
               Delete Availability
@@ -69,12 +77,14 @@ const TutorCurrentAvailability = ({ tutorId, onRequestNew }) => {
           </div>
         </>
       ) : (
-        <div>
-          <p>You have not submitted availability yet.</p>
+        <div className="no-availability">
+        <p>You have not submitted availability yet.</p>
+        <div className="add-availability-btn-container">
           <button className="uta-btn uta-btn-primary" onClick={onRequestNew}>
             + Add Availability
           </button>
         </div>
+      </div>
       )}
     </div>
   );

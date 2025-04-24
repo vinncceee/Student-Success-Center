@@ -166,17 +166,8 @@
   justify-content: center;
   z-index: 1001;
 }
- 
-.calendar-modal {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  width: 300px;
-  max-height: 400px;
-  overflow-y: auto;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
- 
+
+  */
 .calendar-modal h3 {
   margin-top: 0;
   font-size: 1.2rem;

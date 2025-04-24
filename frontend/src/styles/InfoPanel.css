@@ -1,12 +1,11 @@
 .info-panel{
   position: fixed;
   right: 2vh; /* Keep it 2vh from the right */
-  
   /* Set top and bottom margins relative to screen height */
   top: 6vh; 
 
   /* Dynamically calculate height */
-  height: calc(100vh - 13vh); /* Ensures margins remain proportional */
+  height: calc(100vh - 11.9vh); /* Ensures margins remain proportional */
 
   width: 27vh; 
   background-color: #204eb1;
