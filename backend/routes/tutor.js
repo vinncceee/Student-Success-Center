@@ -7,13 +7,22 @@ const {
   getTutorById,
   updateTutor,
   deleteTutor,
-  deleteAvailability
+  deleteAvailability,
+  getTutorBookings,
+  getTutorReport
 } = require('../controllers/tutorController');
+const { get } = require('mongoose');
 
 // Tutor Availability
 router.post('/:tutorId/availability', createAvailability);
 router.get('/:tutorId/availability', getAvailabilityByTutor);
 router.delete('/:tutorId/availability', deleteAvailability);
+
+// Tutor Bookings
+router.get('/:tutorId/bookings', getTutorBookings);
+
+// Tutor Reports
+router.get('/:tutorId/report', getTutorReport)
 
 // Tutor Profile Management
 router.get('/', getAllTutors);            // Get all tutors

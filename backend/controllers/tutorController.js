@@ -3,31 +3,10 @@ const User = require('../models/User');
 const Slot = require('../models/Slot');
 
 // POST /api/tutors/:tutorId/availability
-// exports.createAvailability = async (req, res) => {
-//   try {
-//     const { weeklySchedule } = req.body;
-//     const tutorId = req.params.tutorId;
-
-//     const existing = await TutorAvailability.findOne({ tutorId });
-//     if (existing) return res.status(400).json({ message: 'Availability already exists.' });
-
-//     const newAvailability = new TutorAvailability({ tutorId, weeklySchedule });
-//     await newAvailability.save();
-
-//     res.status(201).json(newAvailability);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
-
-
 exports.createAvailability = async (req, res) => {
   try {
     const { weeklySchedule } = req.body;
     const tutorId = req.params.tutorId;
-
-    console.log("Received tutorId:", tutorId);
-    console.log("Received weeklySchedule:", JSON.stringify(weeklySchedule, null, 2));
 
     const existing = await TutorAvailability.findOne({ tutorId });
     if (existing) {
@@ -42,7 +21,7 @@ exports.createAvailability = async (req, res) => {
 
     res.status(201).json(newAvailability);
   } catch (err) {
-    console.error("❌ Server error in createAvailability:", err);
+    console.error("Server error in createAvailability:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -80,6 +59,55 @@ exports.getAvailabilityByTutor = async (req, res) => {
     res.json(availability);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+
+// GET /api/tutors/:tutorId/bookings
+exports.getTutorBookings = async (req, res) => {
+  try {
+    const bookings = await Slot.find({
+      tutorId: req.params.tutorId,
+      isBooked: true
+    }).populate('studentId'); // Optional: populate student details
+
+    res.json(bookings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch tutor bookings' });
+  }
+};
+
+// GET /api/tutors/:tutorId/report
+exports.getTutorReport = async (req, res) => {
+  try {
+    const tutorId = req.params.tutorId;
+
+    // Fetch all booked sessions for the tutor
+    const sessions = await Slot.find({ tutorId, isBooked: true });
+
+    // Total sessions conducted
+    const totalSessions = sessions.length;
+
+    // Unique students helped
+    const uniqueStudentIds = new Set(sessions.map(s => s.studentId?.toString()));
+    const totalStudents = uniqueStudentIds.size;
+
+    // Aggregate all subjects taught
+    const allSubjects = sessions.flatMap(s => s.subjects || []);
+    const uniqueSubjects = [...new Set(allSubjects)];
+
+    // Return the report
+    res.json({
+      totalSessions,
+      totalStudents,
+      subjects: uniqueSubjects,
+      averageRating: 5.0 // Hardcoded for now
+    });
+
+  } catch (err) {
+    console.error("Error generating tutor report:", err);
+    res.status(500).json({ message: "Failed to generate tutor report." });
   }
 };
 
