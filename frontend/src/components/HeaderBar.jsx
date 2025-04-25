@@ -105,10 +105,9 @@ function HeaderBar() {
         setError(""); // Clear previous errors
     };
 
-    // ✅ Handle Sign-Out
-    const handleSignOut = (scannedId) => {
-        console.log("Stored ID in State Before Fix:", storedId); // ✅ Debugging
-        console.log("Scanned ID Before Fix:", scannedId); // ✅ Debugging
+    const handleSignOut = async (scannedId) => {
+        console.log("Stored ID in State Before Fix:", storedId);
+        console.log("Scanned ID Before Fix:", scannedId);
     
         if (!scannedId || scannedId.trim() === "") {
             setError("❌ No ID detected. Please try again.");
@@ -120,41 +119,42 @@ function HeaderBar() {
             return;
         }
     
-        // ✅ Normalize both IDs to prevent hidden mismatches
         const normalizedStoredId = storedId.toString().trim().replace(/\s+/g, "");
         const normalizedScannedId = scannedId.toString().trim().replace(/\s+/g, "");
-    
-        console.log("Stored ID After Fix:", normalizedStoredId); // ✅ Debugging
-        console.log("Scanned ID After Fix:", normalizedScannedId); // ✅ Debugging
     
         if (normalizedScannedId !== normalizedStoredId) {
             setError(`❌ ID did not match. Expected: ${normalizedStoredId}, Got: ${normalizedScannedId}`);
             return;
         }
     
-        // ✅ Preserve email and role to prevent re-authentication
-        const userEmail = localStorage.getItem("emailForSignIn");
-        const userRole = localStorage.getItem("role");
+        const email = localStorage.getItem("emailForSignIn");
+        const role = localStorage.getItem("role");
     
-        localStorage.clear(); // Clear session data
-        if (userEmail) {
-            localStorage.setItem("verifiedUser", userEmail); // ✅ Keep verified email
+        try {
+            if (email) {
+                await axios.post(`${API_URL}/api/students/attendance/log`, {
+                    email,
+                    type: "Sign Out",
+                });
+                console.log("✅ Manual Sign Out logged");
+            }
+        } catch (err) {
+            console.error("❌ Failed to log sign out:", err);
         }
-        if (userRole) {
-            localStorage.setItem("role", userRole); // ✅ Keep user role
-        }
     
-        setShowModal(false); // Hide modal
-        setSignoutSuccess(true); // Show success message
+        localStorage.clear();
+        if (email) localStorage.setItem("verifiedUser", email);
+        if (role) localStorage.setItem("role", role);
     
-        // Redirect to sign-in page after 2 seconds
+        setShowModal(false);
+        setSignoutSuccess(true);
+    
         setTimeout(() => {
             setSignoutSuccess(false);
             navigate("/signin");
         }, 2000);
     };
     
-
     return (
         <div className="header-bar">
             <img src={UTAlogo} alt="UTA Logo" className="header-logo" />

@@ -5,6 +5,8 @@ import AppointmentsPage from "./AppointmentsPage";
 import TodaysAvailableSlots from "./TodaysAvailableSlots";
 import Calendar from "./Calendar";
 import Profile from "./Profile";
+import StudentAttendance from "./StudentAttendance";
+
 import "../styles/StudentDashboard.css";
 
 const StudentDashboard = ({ user }) => {
@@ -23,7 +25,7 @@ const StudentDashboard = ({ user }) => {
           <div className="student-profile">
             <Profile email={user?.email} />
           </div>
-          <div className="student-attendance">Student Attendance Component (WIP) </div>
+          <div  className="student-attendance"> <StudentAttendance user={user} /> </div>
         </div>
 
         <div className="student-section-box student-available-turors">

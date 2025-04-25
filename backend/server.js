@@ -25,6 +25,7 @@ const slotRoute = require('./routes/slot');
 const studentRoute = require('./routes/student');
 const profileRoutes = require('./routes/profile'); // NEW PROFILE ROUTES
 
+
 // Mount your routes here
 app.use('/api/users', userRoutes);
 app.use('/api/tutors', tutorRoutes);
@@ -32,6 +33,9 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/students', studentRoute);
 app.use('/api/slots', slotRoute);
 app.use('/api/profile', profileRoutes); // NEW MOUNT POINT
+
+
+
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
 
